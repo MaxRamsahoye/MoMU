@@ -21,7 +21,7 @@
   }
   * {
     box-sizing: border-box;
-    /* Custom Hexagon Cursor applied universally (White fill, Orange border) */
+    /* Custom Hexagon Cursor applied universally (White fill, Orange border, smaller size) */
     cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24'%3E%3Cpolygon points='12,2 21,7 21,17 12,22 3,17 3,7' fill='%23ffffff' stroke='%23e36843' stroke-width='2'/%3E%3C/svg%3E") 7 7, auto !important;
   }
   /* Hide default scrollbar for IE, Edge and Firefox */
@@ -69,7 +69,7 @@
     pointer-events: none;
   }
   .loading-gif {
-    width: 120px;
+    width: 360px; /* Increased by 3x from 120px */
     height: auto;
     mix-blend-mode: multiply;
   }
@@ -369,6 +369,7 @@
   
   /* Independent GIF positioning below the sidebar flow */
   .sidebar-gif {
+    display: none; /* Hidden on the main page per request */
     position: absolute;
     top: calc(100% + 6rem);
     left: 1rem;
@@ -832,9 +833,6 @@
         <li><a href="#criteria" data-target="criteria">8<span class="dot-accent">.</span> Civilisation Design Criteria</a></li>
       </ul>
     </div>
-    
-    <!-- GIF positioned below the sidebar contents, independent of normal flow -->
-    <img src="Hex Grid Circular.gif" alt="Hex Grid Circular" id="sidebar-gif" class="sidebar-gif">
   </aside>
 
   <main class="main-wrapper">
@@ -880,7 +878,7 @@
           <li>Tang’s <em><a href="https://www.plurality.institute/blog-posts/book-launch-plurality-the-future-of-collaborative-technology-and-democracy-by-e-glen-weyl-audrey-tang-and-the-plurality-community" class="inline-link" target="_blank">Plurality<span class="dot-accent">:</span> The Future of Collaborative Technology and Democracy</a></em> (2024).</li>
         </ul>
         <p>Despite this there has been minimal research to critically and systematically examine the <em>mechanics of meta-utopia</em><span class="dot-accent">:</span> how a future post-AGI world-system, as a sociotechnical architecture, functions to mediate the interaction between multiple cultures (epistemologies, ontologies, axiologies) and translate the <em><a href="https://www.lesswrong.com/w/complexity-of-value" class="inline-link" target="_blank">complexity of values</a></em> into a dynamic, <em><a href="https://plato.stanford.edu/entries/rawls/#StaOveCon" class="inline-link" target="_blank">overlapping consensus</a></em>. In other words, how civilisation can sustain a <em>progressive form of pluralism</em> at a civilisational-scale, over long-term time horizons (ge geopolitically and spatio-temporally).</p>
-        <p>As we see it, this is the ultimate project of steering towards <em>desirable civilisational equilibria</em> – and as such, it will inevitably be beyond the scope of this material to provide a sufficient answer. Nonetheless, we aim to formulate the primary constraints, criteria and catastrophes for such a world-system and in doing so formalise an ambitious paradigm for future <em><a href="https://civilizationemerging.com/category/civilization-design/" class="inline-link" target="_blank">civilisation design</a></em> and <em><a href="https://gradual-disempowerment.ai/mitigating-the-risk" class="inline-link" target="_blank">civilisation alignment</a></em> research. The most useful starting point for our purposes is Hanson’s short essay <em>Utopia’s Garden, World, and Wall</em> (2020), which we turn to next.</p>
+        <p>As we see it, this is the ultimate project of steering towards <em>desirable civilisational equilibria</em> – and as such, it will inevitably be beyond the scope of this material to provide a sufficient answer. Nonetheless, we aim to formulate the primary constraints, criteria and catastrophes for such a world-system and in doing so formalise an ambitious paradigm for future <em><a href="https://civilizationemerging.com/category/civilization-design/" class="inline-link" target="_blank">civilisation design</a></em> and <em><a href="https://gradual-disempowerment.ai/mitigating-the-risk" class="inline-link" target="_blank">civilisation alignment</a></em> research. The most useful starting point for our purposes is Hanson’s short essay <em>Utopia’s Garden, Wall and World</em> (2020), which we turn to next.</p>
       </section>
       
       <section id="mechanics" class="scroll-section">
@@ -1208,16 +1206,6 @@
     const scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
     const scrollPercent = (scrollTop / scrollHeight) * 100;
     document.getElementById('scrollProgress').style.height = scrollPercent + '%';
-    
-    // Fade out the Hex GIF
-    const sidebarGif = document.getElementById('sidebar-gif');
-    if (sidebarGif) {
-      if (scrollTop > 50) {
-        sidebarGif.classList.add('faded');
-      } else {
-        sidebarGif.classList.remove('faded');
-      }
-    }
 
     // 2. Track when scrolled past the title section for back-to-top button
     const titleSection = document.getElementById('titleSection');
