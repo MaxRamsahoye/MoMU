@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Mechanics of Meta-Utopia</title>
-<link rel="icon" type="image/gif" href="Hex Grid Circular.gif">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpolygon points='12,2 21,7 21,17 12,22 3,17 3,7' fill='%23ffffff' stroke='%23e36843' stroke-width='2'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -686,15 +686,38 @@
   }
 
   /* ========================================== */
-  /* REFINED WIREFRAME DIAGRAM                  */
+  /* REFINED WIREFRAME DIAGRAM & NEW BOX        */
   /* ========================================== */
   .mechanics-diagram-breakout {
     width: 100%;
     margin: 6rem 0;
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
   }
+  
+  .combined-frames-box {
+    width: 100%;
+    max-width: 900px; /* Aligns with wireframe-wrapper */
+    border-left: 4px solid var(--accent-color);
+    padding-left: 1.5rem;
+    margin-bottom: 3rem;
+    font-family: var(--font-sans);
+    font-size: 1.05rem; 
+    color: var(--text-secondary);
+    line-height: 1.6;
+    transition: color 0.4s ease;
+  }
+  .combined-frames-box a {
+    color: var(--accent-color);
+    text-decoration: none;
+    transition: text-decoration 0.2s ease;
+  }
+  .combined-frames-box a:hover {
+    text-decoration: underline;
+  }
+  
   .wireframe-wrapper {
     position: relative;
     width: 100%;
@@ -756,7 +779,8 @@
     box-sizing: border-box;
     transition: transform 0.3s ease;
   }
-
+  
+  /* Absolute Positioning to Pin Text into the Corners */
   .text-content {
     position: absolute;
     width: calc(100% - 4rem);
@@ -766,6 +790,14 @@
   .wf-tr .text-content { top: 2rem; right: 2rem; text-align: right; }
   .wf-bl .text-content { bottom: 2rem; left: 2rem; text-align: left; }
   .wf-br .text-content { bottom: 2rem; right: 2rem; text-align: right; }
+
+  /* * Flow contours allowing the text spacing to seamlessly flow with the shapes 
+   * These divs repel inline text away from the center cutout in each corner L-shape
+   */
+  .flow-br { float: right; width: 50%; height: 100%; shape-outside: polygon(0 60%, 100% 60%, 100% 100%, 0 100%); shape-margin: 1.5rem; }
+  .flow-bl { float: left; width: 50%; height: 100%; shape-outside: polygon(0 60%, 100% 60%, 100% 100%, 0 100%); shape-margin: 1.5rem; }
+  .flow-tr { float: right; width: 50%; height: 100%; shape-outside: polygon(0 0, 100% 0, 100% 40%, 0 40%); shape-margin: 1.5rem; }
+  .flow-tl { float: left; width: 50%; height: 100%; shape-outside: polygon(0 0, 100% 0, 100% 40%, 0 40%); shape-margin: 1.5rem; }
   
   /* Hover transforms */
   .wf-cell:hover .wf-content {
@@ -833,6 +865,10 @@
     align-items: center;
     text-align: center;
     padding: 2.5rem;
+  }
+  .wf-center .text-content {
+    position: relative;
+    width: 100%;
   }
 
   /* The 4 L-Shapes */
@@ -1048,6 +1084,9 @@
     </div>
 
     <div class="mechanics-diagram-breakout">
+      <div class="combined-frames-box">
+        <em>Combined Frames</em><span class="dot-accent">:</span> 1. Duettmann's <a href="https://foresightinstitute.substack.com/p/defend-physical" class="inline-link" target="_blank">'multi-polar active shields'</a> (top left). 2. Nozick's <a href="https://iep.utm.edu/noz-poli/#:~:text=Instead%2C%20he%20turns,of%20cultural%20relativism." class="inline-link" target="_blank">‘meta-utopia’</a> (top right) and Barrat-Douglas' <a href="https://strangecities.substack.com/p/the-choice-transition" class="inline-link" target="_blank">'choice transition’</a> and <a href="https://www.lesswrong.com/posts/kvZyCJ4qMihiJpfCr/ai-for-societal-uplift-as-a-path-to-victory" class="inline-link" target="_blank">'societal uplift'</a> 3. Hanson's <a href="https://quillette.com/2024/04/11/beware-cultural-drift/" class="inline-link" target="_blank">'global monoculture'</a> and Drexler's <a href="https://en.wikipedia.org/wiki/Gray_goo" class="inline-link" target="_blank">'gray goo'</a> (bottom right) 4. Bostrom's (technological) <a href="https://nickbostrom.com/papers/future.pdf" class="inline-link" target="_blank">'permanent plateau'</a> and Ord's <a href="https://www.are.na/block/9253597" class="inline-link" target="_blank">'unrecoverable collapse'</a> (bottom left)
+      </div>
       <div class="wireframe-wrapper" id="matrix-wrapper">
         <div class="axis-label y-axis">Cultural Integrity</div>
         <div class="ticks y-high">High</div>
@@ -1057,6 +1096,7 @@
           
           <div class="wf-cell wf-tl">
             <div class="wf-content">
+              <div class="flow-br"></div>
               <div class="text-content">
                 <h4>Meta-Dystopian Enclosure</h4>
                 <span class="sub-title"><span class="dot-accent">(</span>Localised lock-ins<span class="dot-accent">)</span></span>
@@ -1067,6 +1107,7 @@
 
           <div class="wf-cell wf-tr">
             <div class="wf-content">
+              <div class="flow-bl"></div>
               <div class="text-content">
                 <h4>Meta-Utopian Uplift</h4>
                 <span class="sub-title"><span class="dot-accent">(</span>Epistemic Equilibria<span class="dot-accent">)</span></span>
@@ -1077,6 +1118,7 @@
 
           <div class="wf-cell wf-bl">
             <div class="wf-content">
+              <div class="flow-tr"></div>
               <div class="text-content">
                 <h4>Cultural Collapse</h4>
                 <span class="sub-title"><span class="dot-accent">(</span>Permanent Plateau<span class="dot-accent">)</span></span>
@@ -1087,6 +1129,7 @@
 
           <div class="wf-cell wf-br">
             <div class="wf-content">
+              <div class="flow-tl"></div>
               <div class="text-content">
                 <h4>Mono-Cultural Takeover</h4>
                 <span class="sub-title"><span class="dot-accent">(</span>Gray Goo<span class="dot-accent">)</span></span>
@@ -1097,9 +1140,11 @@
 
           <div class="wf-cell wf-center">
             <div class="wf-content">
-              <h4>Clash of Civilisations</h4>
-              <span class="sub-title"><span class="dot-accent">(</span>Cultural Competition and Conflict<span class="dot-accent">)</span></span>
-              <p>An underdetermined, hybrid condition – exhibiting proto-characteristics of mono-culture, meta-dystopia and cultural collapse – where multiple cultures compete for survival, sovereignty and supremacy.</p>
+              <div class="text-content">
+                <h4>Clash of Civilisations</h4>
+                <span class="sub-title"><span class="dot-accent">(</span>Cultural Competition and Conflict<span class="dot-accent">)</span></span>
+                <p>An underdetermined, hybrid condition – exhibiting proto-characteristics of mono-culture, meta-dystopia and cultural collapse – where multiple cultures compete for survival, sovereignty and supremacy.</p>
+              </div>
             </div>
           </div>
 
@@ -1210,7 +1255,7 @@
         <h2>7<span class="dot-accent">.</span> Macrostrategic Frames<span class="dot-accent">:</span> for the Governance of Cultural Evolution</h2>
         <p>Based on the scenarios introduced in this research article, we can derive fundamental frames for the governance of cultural evolution in the Age of AGI: navigating the <em>Narrow Cultural Corridor</em> and solving <em>the Symmetry Problem</em>.</p>
         
-        <h3>Navigating the ‘Narrow Cultural Corridor’</h3>
+        <h3>Navigating the ‘Narrow Cultural Corridor’<span class="dot-accent">:</span> Libertarianism vs Paternalism</h3>
         <p>The governance of cultural evolution must navigate between <em>pluralistic libertarianism</em>, a minimalist <em>laissez-faire</em> approach which allows a <em>global poly-culture</em> (extreme heterogenisation) to persist without progress and <em>benevolent paternalism</em>, a maximalist <em>interventionist</em> approach which enforces a <em>global monoculture</em> (extreme homogenisation), ending multi-cultural diversity. Both lead to moral stagnation and the flawed realisation of civilisation’s potential.</p>
         
         <p>The parameters of diversity within meta-utopia need to be reflected upon as the ideal goldilocks zone for designed cultural lock-in is (1) not an extreme monoculture that excludes morally valuable cultures or (2) an extreme polyculture that includes morally disvaluable cultures. Cultural homogeneity and heterogeneity have two different failure modes: simply put, exclusion of the good and inclusion of the bad. Governance must avoid both <em>cultural existential risks</em> simultaneously. The middle path to achieve this we call <em>autopoetic alignment</em> (though we leave it underspecified here).</p>
@@ -1267,7 +1312,7 @@
         
         <p><strong>Syntopia<span class="dot-accent">:</span></strong> is an ideal civilisational endstate in which humanity has converged on a universal morality, ‘perennial philosophy’ and syncretic culture. All minds share in the truth (epistemics), goodness (ethics) and beauty (aesthetics) of a grand synthesis; which transcends and includes all worldviews from history into an emergent whole, aligned with the nature of interobjective reality and the conditions of existential flourishing. Life is lived pluralistically and dynamically without locking-in the future to a singular way of life or form of being, but instead oscillating between cultures across (what would for humans be multiple) lifetimes. Syntopia could potentially emerge from mass multi-directional migration and cultural cross-pollination over intergenerational time or from AI-enhanced epistemics at a civilisational-scale.</p>
         
-        <h3>The Creation of a Meta-Utopian Institution</h3>
+        <h3>The Creation of a Meta-Utopian Institution<span class="dot-accent">:</span> A Compelling Candidate Project</h3>
         <div class="indented-quote">
           <em>The Internet Government</em> is a system of representation of perspectives, not people - a platform fed with crowd-sourced contributions of research, rhetoric, and reason. We separate the ideas from the individuals, and this allows us to coordinate more complex and comprehensive social and political debates between conflicting perspectives, ideologies, and ideas. By systematically classifying the uploaded ideas from citizens, we can distinguish between textbook logic and textbook logical fallacy, and identify our clash in values so that the arguing can stop and we can start ideating legislative solutions: solutions which work for all of us. We would no longer depend on majority-rule, but instead a more sophisticated mathematical threshold to determine what legislative solutions address all legitimate concerns. We don't have to agree, but we need to compromise and move forward. <em>The Internet Government</em> facilitates that. <em>The Internet Government's Abstract Meritocratic Model</em> is appropriate for high-level deliberations, such as between ideologies concerning human rights and resource issues as topics. As a model, its future is to be adapted and adopted to serve constituents of countries worldwide, as well as scale to enable a global conversation of human ideologies.
         </div>
