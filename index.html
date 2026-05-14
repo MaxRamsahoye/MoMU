@@ -3,53 +3,104 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>The Mechanics of Meta-Utopia?: Civilisation Design - The New Centre for Coordination</title>
+<title>Mechanics of Meta-Utopia</title>
+<link rel="icon" type="image/gif" href="Hex Grid Circular.gif">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root {
     --bg-color: #ffffff; 
+    --top-gradient: #ffffff;
     --header-bg: #ffffff; 
+    --header-triangle: #f3f3f3;
     --text-primary: #1a1a1a;
     --text-secondary: #4a4a4a;
     --border-color: #e5e5e5;
     --accent-color: #e36843; 
+    --bottom-bar-bg: #dc5e35;
     --sidebar-width: 310px; 
     --font-serif: 'Cormorant Garamond', serif;
     --font-sans: 'IBM Plex Sans Arabic', sans-serif;
+    
+    /* Wireframe Diagram Variables */
+    --wf-center-hover: conic-gradient(#fdf8e2 0deg 90deg, #f5f6f7 90deg 180deg, #ffeae7 180deg 270deg, #fee4d0 270deg 360deg);
+    --wf-tl-hover: #fee4d0;
+    --wf-tr-hover: #fdf8e2;
+    --wf-bl-hover: #ffeae7;
+    --wf-br-hover: #f5f6f7;
   }
+
+  /* Applied to HTML to ensure entire page background updates properly */
+  html.dark-theme {
+    --bg-color: #121212;
+    --top-gradient: #121212;
+    --header-bg: #121212;
+    --header-triangle: #1e1e1e;
+    --text-primary: #ffffff;
+    --text-secondary: #ffffff;
+    --border-color: #333333;
+    --accent-color: #d15632;
+    
+    /* Darker Wireframe Diagram Hover States */
+    --wf-center-hover: conic-gradient(#3a2e22 0deg 90deg, #2a2b2c 90deg 180deg, #382422 180deg 270deg, #3d2b1f 270deg 360deg);
+    --wf-tl-hover: #3d2b1f;
+    --wf-tr-hover: #3a2e22;
+    --wf-bl-hover: #382422;
+    --wf-br-hover: #2a2b2c;
+  }
+
   * {
     box-sizing: border-box;
     /* Custom Hexagon Cursor applied universally (White fill, Orange border, smaller size) */
     cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24'%3E%3Cpolygon points='12,2 21,7 21,17 12,22 3,17 3,7' fill='%23ffffff' stroke='%23e36843' stroke-width='2'/%3E%3C/svg%3E") 7 7, auto !important;
   }
+  
+  html.dark-theme * {
+    /* Custom Hexagon Cursor for dark theme (Dark fill, Orange border) */
+    cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24'%3E%3Cpolygon points='12,2 21,7 21,17 12,22 3,17 3,7' fill='%23121212' stroke='%23d15632' stroke-width='2'/%3E%3C/svg%3E") 7 7, auto !important;
+  }
+
   /* Hide default scrollbar for IE, Edge and Firefox */
   html {
     background-color: var(--bg-color);
     -ms-overflow-style: none;  /* IE and Edge */
     scrollbar-width: none;  /* Firefox */
+    transition: background-color 0.4s ease;
   }
+  
   /* Hide default scrollbar for Chrome, Safari and Opera */
   ::-webkit-scrollbar {
     display: none;
   }
+  
   body {
     margin: 0;
     font-family: var(--font-serif);
     background-color: var(--bg-color); 
-    background-image: linear-gradient(to bottom, #ffffff, var(--bg-color) 350px);
+    background-image: linear-gradient(to bottom, var(--top-gradient), var(--bg-color) 350px);
     background-repeat: no-repeat;
     min-height: 100vh;
     color: var(--text-primary);
     line-height: 1.4;
     -webkit-font-smoothing: antialiased;
     overflow-x: hidden; 
+    transition: background-color 0.4s ease, color 0.4s ease;
   }
   body.loading-active {
     overflow: hidden;
   }
   
+  /* Image invert for dark theme with screen blend mode to strip the bounding box */
+  html.dark-theme .logo-image,
+  html.dark-theme .footer-logo,
+  html.dark-theme .sidebar-gif,
+  html.dark-theme .loading-gif {
+    filter: invert(1) hue-rotate(180deg);
+    mix-blend-mode: screen;
+    background-color: transparent !important;
+  }
+
   /* Loading Screen Overlay */
   #loading-screen {
     position: fixed;
@@ -62,7 +113,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    transition: opacity 0.8s ease-in-out;
+    transition: opacity 0.8s ease-in-out, background-color 0.4s ease;
   }
   #loading-screen.hidden {
     opacity: 0;
@@ -85,6 +136,7 @@
     clip-path: polygon(0 0, 0 100%, 100% 100%);
     z-index: 100;
     pointer-events: none;
+    transition: background-color 0.4s ease;
   }
   .corner-bottom {
     position: fixed;
@@ -92,10 +144,11 @@
     left: 0;
     width: calc(4vw + var(--sidebar-width) + 2rem); 
     height: 2vw; 
-    background-color: #dc5e35; 
+    background-color: var(--bottom-bar-bg); 
     clip-path: polygon(0 0, 100% 100%, 0 100%);
     z-index: 100;
     pointer-events: none;
+    transition: background-color 0.4s ease;
   }
   /* Scroll Progress Bar */
   .scroll-progress {
@@ -106,7 +159,7 @@
     height: 0%;
     background-color: var(--accent-color);
     z-index: 9999;
-    transition: height 0.1s ease-out;
+    transition: height 0.1s ease-out, background-color 0.4s ease;
   }
   /* Static Navigation Header */
   header {
@@ -119,6 +172,7 @@
     border-bottom: none; 
     position: relative; 
     z-index: 50; 
+    transition: background-color 0.4s ease;
   }
   /* Right-Angled Triangle Background */
   header::before {
@@ -128,72 +182,34 @@
     left: 0;
     width: 50vw; 
     height: 180px; 
-    background-color: #f3f3f3; 
+    background-color: var(--header-triangle); 
     clip-path: polygon(0 0, 100% 0, 0 100%, 0 100%);
     z-index: 0;
     pointer-events: none;
     transition: all 0.8s cubic-bezier(0.25, 1, 0.5, 1);
   }
-  header.about-open::before {
-    background-color: #ffffff; 
-    /* Box background expands slightly past the dividing line for a clean visual, but the text is bounded below */
-    width: calc(7vw + var(--sidebar-width) + 2rem); 
-    max-width: 100vw;
-    height: 300px; 
-    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
-  }
-  .nav-links {
-    position: relative;
-    z-index: 5; 
-  }
-  .nav-links a {
-    margin-right: 2rem;
-    text-decoration: none;
-    color: var(--text-secondary);
-    font-weight: 400; 
-    font-size: 0.9rem;
-    transition: color 0.2s ease;
-  }
-  .nav-links a:last-child {
-    margin-right: 0;
-  }
-  .nav-links a:hover, .nav-links a.active-link {
-    color: var(--accent-color);
-  }
   
-  /* About Section Content */
-  .about-content {
-    position: absolute;
-    top: 5.5rem; 
-    left: 3rem;
-    /* Strict calculation to ensure text absolutely does not cross the sidebar vertical boundary (7vw + sidebar-width) */
-    width: calc(7vw + var(--sidebar-width) - 3rem);
-    padding-right: 1rem; /* Added buffer to keep it cleanly inside the line */
-    opacity: 0;
-    visibility: hidden;
-    transform: translateY(-10px);
-    transition: opacity 0.6s ease 0.2s, transform 0.6s ease 0.2s, visibility 0.6s;
+  .theme-toggle {
+    cursor: pointer;
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
     z-index: 5;
+    position: relative;
+    transition: color 0.4s ease;
   }
-  header.about-open .about-content {
-    opacity: 1;
-    visibility: visible;
-    transform: translateY(0);
-  }
-  .about-content p {
-    font-family: var(--font-serif);
-    font-size: 0.95rem;
-    color: var(--text-primary);
-    margin: 0 0 1.5rem 0; 
-    line-height: 1.5;
-  }
+  .theme-toggle:hover { color: var(--accent-color); }
+  .theme-toggle svg { width: 20px; height: 20px; transition: transform 0.3s ease; }
+  .moon-icon { display: none; }
+  html.dark-theme .sun-icon { display: none; }
+  html.dark-theme .moon-icon { display: block; }
 
+  /* Removed relative positioning and z-index to fix blend-mode stacking context */
   .logo-container {
     display: flex;
     align-items: center;
     gap: 0.5rem; 
-    position: relative;
-    z-index: 5;
   }
   .logo-text {
     font-weight: 500; 
@@ -206,6 +222,7 @@
     object-fit: contain;
     mix-blend-mode: multiply; 
   }
+  
   /* Main Container Layout */
   .container {
     display: flex;
@@ -218,6 +235,7 @@
     position: relative; 
     z-index: 5;
   }
+  
   /*
    * ==========================================
    * LOCKED COMPONENTS: SIDEBAR & TITLE BOX
@@ -234,7 +252,7 @@
     font-family: var(--font-sans);
     border-right: 1px solid var(--border-color);
     padding-right: 2rem;
-    transition: width 0.6s ease-in-out, min-width 0.6s ease-in-out, max-width 0.6s ease-in-out, padding 0.6s ease-in-out, margin-right 0.6s ease-in-out;
+    transition: width 0.6s ease-in-out, min-width 0.6s ease-in-out, max-width 0.6s ease-in-out, padding 0.6s ease-in-out, margin-right 0.6s ease-in-out, border-color 0.4s ease;
     display: flex;
     flex-direction: column;
   }
@@ -265,26 +283,23 @@
   /* Mini Title for Scrolled State */
   .sidebar-mini-title {
     font-family: var(--font-serif);
-    font-size: 1.15rem;
+    font-size: 1.45rem;
     font-weight: 600;
     color: var(--text-primary);
     opacity: 0;
     visibility: hidden;
-    max-height: 0;
-    overflow: hidden;
-    /* Removed max-height & margin-bottom from transition for pure fade effect */
-    transition: opacity 0.4s ease, visibility 0.4s ease;
-    margin-bottom: 0;
+    position: absolute;
+    bottom: calc(100% + 1.5rem); /* Positions absolute above the vertical dividing line */
+    left: 0;
+    transition: opacity 0.4s ease, visibility 0.4s ease, color 0.4s ease;
     line-height: 1.3;
     letter-spacing: -0.01em;
-    width: 278px; /* Fixed width to prevent text reflow when sidebar shrinks */
+    width: 278px;
     flex-shrink: 0;
   }
   .sidebar-mini-title.visible {
     opacity: 1;
     visibility: visible;
-    max-height: 200px;
-    margin-bottom: 1.5rem;
   }
   .locked-sidebar.collapsed .sidebar-mini-title {
     opacity: 0;
@@ -313,6 +328,7 @@
     text-transform: uppercase;
     letter-spacing: 0.05em;
     color: var(--text-secondary);
+    transition: color 0.4s ease;
   }
   
   .sidebar-toggle {
@@ -328,7 +344,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: right 0.6s ease-in-out, color 0.2s ease, transform 0.6s ease-in-out;
+    transition: right 0.6s ease-in-out, color 0.4s ease, transform 0.6s ease-in-out;
     z-index: 10;
   }
   .sidebar-toggle svg {
@@ -360,7 +376,6 @@
     list-style: none;
     padding: 0;
     margin: 0;
-    transition: opacity 0.4s ease; 
     white-space: nowrap;
     overflow: hidden;
   }
@@ -373,7 +388,7 @@
     font-size: 0.95rem;
     display: block;
     line-height: 1.4;
-    transition: color 0.2s ease, font-weight 0.2s ease;
+    transition: color 0.4s ease, font-weight 0.2s ease;
   }
   .locked-sidebar a:hover,
   .locked-sidebar a.active {
@@ -385,7 +400,7 @@
   
   /* Independent GIF positioning below the sidebar flow */
   .sidebar-gif {
-    display: none; /* Hidden on the main page per request */
+    display: none; 
     position: absolute;
     top: calc(100% + 6rem);
     left: 1rem;
@@ -408,6 +423,7 @@
     padding-bottom: 2rem !important; 
     border-bottom: 1px solid var(--border-color) !important;
     display: block !important;
+    transition: border-color 0.4s ease;
   }
   .locked-title-box .pre-title {
     font-family: var(--font-sans);
@@ -417,6 +433,7 @@
     color: var(--text-secondary);
     margin-bottom: 1rem;
     letter-spacing: 0.02em;
+    transition: color 0.4s ease;
   }
   .locked-title-box h1 {
     font-size: 3.5rem;
@@ -432,7 +449,10 @@
     color: var(--text-secondary) !important;
     line-height: 1.4 !important;
     margin: 0 0 2rem 0 !important;
+    transition: color 0.4s ease;
   }
+  
+  /* Title Box Author Meta & Hoverbox */
   .locked-title-box .meta {
     font-family: var(--font-sans);
     color: var(--text-secondary);
@@ -440,9 +460,68 @@
     gap: 2rem;
     font-size: 0.9rem;
     letter-spacing: 0.05em;
+    transition: color 0.4s ease;
+    position: relative;
   }
   .meta .author-name {
-    text-transform: capitalize;
+    display: inline-flex;
+    align-items: center;
+  }
+  .info-wrapper {
+    display: inline-flex;
+    align-items: center;
+    margin-left: 0.5rem;
+    cursor: help !important;
+  }
+  .info-icon {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    border: 1px solid var(--text-secondary);
+    font-family: var(--font-sans);
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    transition: color 0.4s ease, border-color 0.4s ease;
+  }
+  .info-wrapper:hover .info-icon {
+    color: var(--accent-color);
+    border-color: var(--accent-color);
+  }
+  .hoverbox {
+    position: absolute;
+    bottom: 100%;
+    left: 0;
+    transform: translateY(10px);
+    margin-bottom: 0.75rem;
+    width: 480px; 
+    padding: 1rem;
+    background-color: var(--bg-color);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    font-size: 0.85rem;
+    line-height: 1.4;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s, background-color 0.4s ease, color 0.4s ease, border-color 0.4s ease;
+    pointer-events: none;
+    z-index: 100;
+    font-family: var(--font-sans);
+    font-weight: 400;
+    text-transform: none;
+    letter-spacing: normal;
+  }
+  .info-wrapper:hover .hoverbox {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
+  html.dark-theme .hoverbox {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.5);
   }
 
   /* ========================================== */
@@ -496,15 +575,16 @@
   .content h3 {
     font-family: var(--font-sans);
     font-size: 1.4rem;
-    margin-top: 3.5rem;
+    margin-top: 4.5rem;
     margin-bottom: 1.5rem;
     font-weight: 500;
     color: var(--text-secondary);
+    transition: color 0.4s ease;
   }
   .content h4 {
     font-family: var(--font-sans);
     font-size: 1.2rem;
-    margin-top: 1.5rem;
+    margin-top: 3.5rem; /* Increased spacing above subheadings */
     margin-bottom: 0.5rem;
     font-weight: 600;
     color: var(--text-primary);
@@ -547,11 +627,13 @@
     line-height: 1.5;
     padding-left: 1rem;
     border-left: 1px solid var(--border-color);
+    transition: border-color 0.4s ease, color 0.4s ease;
   }
   .section-divider {
     border: none;
     border-top: 1px solid var(--border-color);
     margin: 4rem 0;
+    transition: border-color 0.4s ease;
   }
   .scroll-to-top {
     position: fixed;
@@ -569,7 +651,7 @@
     z-index: 150;
     opacity: 0;
     pointer-events: none;
-    transition: color 0.2s ease, opacity 0.4s ease, transform 0.2s ease;
+    transition: color 0.4s ease, opacity 0.4s ease, transform 0.2s ease;
   }
   .scroll-to-top.visible {
     opacity: 1;
@@ -585,6 +667,22 @@
   }
   .dot-accent {
     color: var(--accent-color);
+  }
+  
+  /* Footer Elements */
+  /* Added background-color for correct mix-blend-mode evaluation */
+  .footer {
+    display: flex;
+    justify-content: center;
+    padding: 4rem 0 1rem 0;
+    margin-top: auto;
+    background-color: var(--bg-color);
+    transition: background-color 0.4s ease;
+  }
+  .footer-logo {
+    height: 95px; /* Matching top-right logo height */
+    width: auto;
+    mix-blend-mode: multiply;
   }
 
   /* ========================================== */
@@ -627,6 +725,7 @@
     position: absolute;
     font-size: 0.95rem;
     color: var(--text-secondary);
+    transition: color 0.4s ease;
   }
   .y-high { top: 15%; left: -45px; }
   .y-low { bottom: 15%; left: -45px; }
@@ -641,6 +740,7 @@
     background-color: var(--border-color); 
     border: 1px solid var(--border-color);
     overflow: hidden;
+    transition: background-color 0.4s ease, border-color 0.4s ease;
   }
   
   .wf-cell {
@@ -654,24 +754,18 @@
     width: 100%; 
     height: 100%; 
     box-sizing: border-box;
-    padding: 2rem;
     transition: transform 0.3s ease;
   }
-  .wf-tl .wf-content, .wf-bl .wf-content {
-    text-align: left;
-  }
-  .wf-tr .wf-content, .wf-br .wf-content {
-    text-align: right;
+
+  .text-content {
+    position: absolute;
+    width: calc(100% - 4rem);
   }
 
-  /* 
-   * Flow contours allowing the text spacing to seamlessly flow with the shapes 
-   * These divs repel inline text away from the center cutout in each corner L-shape
-   */
-  .flow-br { float: right; width: 50%; height: 100%; shape-outside: polygon(0 60%, 100% 60%, 100% 100%, 0 100%); shape-margin: 1.5rem; }
-  .flow-bl { float: left; width: 50%; height: 100%; shape-outside: polygon(0 60%, 100% 60%, 100% 100%, 0 100%); shape-margin: 1.5rem; }
-  .flow-tr { float: right; width: 50%; height: 100%; shape-outside: polygon(0 0, 100% 0, 100% 40%, 0 40%); shape-margin: 1.5rem; }
-  .flow-tl { float: left; width: 50%; height: 100%; shape-outside: polygon(0 0, 100% 0, 100% 40%, 0 40%); shape-margin: 1.5rem; }
+  .wf-tl .text-content { top: 2rem; left: 2rem; text-align: left; }
+  .wf-tr .text-content { top: 2rem; right: 2rem; text-align: right; }
+  .wf-bl .text-content { bottom: 2rem; left: 2rem; text-align: left; }
+  .wf-br .text-content { bottom: 2rem; right: 2rem; text-align: right; }
   
   /* Hover transforms */
   .wf-cell:hover .wf-content {
@@ -691,6 +785,7 @@
     font-size: 0.9rem;
     color: var(--text-secondary);
     display: block;
+    transition: color 0.4s ease;
   }
   .wf-cell p {
     margin: 0;
@@ -714,6 +809,7 @@
     background-color: var(--bg-color);
     border: 1px solid var(--border-color);
     z-index: 10;
+    transition: background-color 0.4s ease, border-color 0.4s ease;
   }
   
   /* Center Gradient Pseudo-element for hover effect */
@@ -721,12 +817,7 @@
     content: '';
     position: absolute;
     inset: 0;
-    background: conic-gradient(
-      #fdf8e2 0deg 90deg,   
-      #f5f6f7 90deg 180deg, 
-      #ffeae7 180deg 270deg,
-      #fee4d0 270deg 360deg 
-    );
+    background: var(--wf-center-hover);
     opacity: 0;
     transition: opacity 0.3s ease;
     z-index: -1;
@@ -755,52 +846,63 @@
     width: calc(50% - 0.5px); height: calc(50% - 0.5px);
     clip-path: polygon(0 0, 100% 0, 100% 60%, 50% 60%, 50% 100%, 0 100%);
   }
-  .wf-tl:hover { background-color: #fee4d0; }
+  .wf-tl:hover { background-color: var(--wf-tl-hover); }
   
   .wf-tr {
     right: 0; top: 0;
     width: calc(50% - 0.5px); height: calc(50% - 0.5px);
     clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 100%, 50% 60%, 0 60%);
   }
-  .wf-tr:hover { background-color: #fdf8e2; }
+  .wf-tr:hover { background-color: var(--wf-tr-hover); }
   
   .wf-bl {
     left: 0; bottom: 0;
     width: calc(50% - 0.5px); height: calc(50% - 0.5px);
     clip-path: polygon(0 0, 50% 0, 50% 40%, 100% 40%, 100% 100%, 0 100%);
   }
-  .wf-bl:hover { background-color: #ffeae7; }
+  .wf-bl:hover { background-color: var(--wf-bl-hover); }
   
   .wf-br {
     right: 0; bottom: 0;
     width: calc(50% - 0.5px); height: calc(50% - 0.5px);
     clip-path: polygon(50% 0, 100% 0, 100% 100%, 0 100%, 0 40%, 50% 40%);
   }
-  .wf-br:hover { background-color: #f5f6f7; }
+  .wf-br:hover { background-color: var(--wf-br-hover); }
 
   /* Responsive Scaling for Wireframe Diagram */
   @media (max-width: 1000px) {
-    .wf-content { padding: 1.25rem; }
+    .text-content { width: calc(100% - 2.5rem); }
+    .wf-tl .text-content { top: 1.25rem; left: 1.25rem; }
+    .wf-tr .text-content { top: 1.25rem; right: 1.25rem; }
+    .wf-bl .text-content { bottom: 1.25rem; left: 1.25rem; }
+    .wf-br .text-content { bottom: 1.25rem; right: 1.25rem; }
+    
     .wf-cell h4 { font-size: 1rem; margin-bottom: 0.15rem; }
     .wf-cell .sub-title { font-size: 0.8rem; margin-bottom: 0.5rem; }
     .wf-cell p { font-size: 0.8rem; line-height: 1.3; }
+    .wf-center .wf-content { padding: 1.25rem; }
   }
   @media (max-width: 768px) {
     .wireframe-wrapper { max-width: 100%; margin: 0 1rem; }
     .wireframe-container { aspect-ratio: 1.1 / 1; } 
+    
+    .text-content { width: calc(100% - 1.5rem); }
+    .wf-tl .text-content { top: 0.75rem; left: 0.75rem; }
+    .wf-tr .text-content { top: 0.75rem; right: 0.75rem; }
+    .wf-bl .text-content { bottom: 0.75rem; left: 0.75rem; }
+    .wf-br .text-content { bottom: 0.75rem; right: 0.75rem; }
+    
     .wf-cell h4 { font-size: 0.95rem; }
     .wf-cell .sub-title { font-size: 0.75rem; margin-bottom: 0.2rem; }
     .wf-cell p { display: none; }
     .axis-label { font-size: 0.9rem; }
     .ticks { font-size: 0.8rem; }
-    .wf-content { padding: 0.75rem; }
     .wf-center .wf-content { padding: 1rem; }
   }
 </style>
 </head>
 <body class="loading-active">
 
-<!-- Loading Screen -->
 <div id="loading-screen">
   <img src="Hex Grid Circular.gif" alt="Loading..." class="loading-gif">
 </div>
@@ -809,17 +911,29 @@
 <div class="corner-bottom"></div>
 <div class="scroll-progress" id="scrollProgress"></div>
 <header>
-  <nav class="nav-links">
-    <a href="#" id="about-link">About</a>
-  </nav>
-  <div class="about-content">
-    <p>I primarily worked on this article during my time as an AI Governance mentor for <em>Impact First!’s Research Fellowship 2026</em>. This is my own extended version of the collective project I directed there. I’d like to give special thanks to Alicia Pollard for inviting me to come back as a mentor this year (after previously participating in the program myself!) and to my mentees for the many formative conversations we had at LEAH together! The section <em>The Symmetry Problem: Monocultural Takeover vs Meta-Dystopian Enclosure</em> was authored by Aaron Aggarwal (one of my mentees).</p>
+  <div class="theme-toggle" id="themeToggle" aria-label="Toggle Dark Mode">
+    <svg class="sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+    <svg class="moon-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+    </svg>
   </div>
+  
   <div class="logo-container">
     <div class="logo-text">Coordination Studies</div>
     <img src="NCC.png" alt="NCC Logo" class="logo-image">
   </div>
 </header>
+
 <div class="container">
   
   <aside class="locked-sidebar" id="research-sidebar">
@@ -830,7 +944,7 @@
       </svg>
     </div>
     
-    <div class="sidebar-mini-title" id="sidebarMiniTitle">The Mechanics of Meta-Utopia<span class="dot-accent">?:</span> Civilisation Design for Desirable Multi-Cultural Equilibria</div>
+    <div class="sidebar-mini-title" id="sidebarMiniTitle"><span style="white-space: nowrap;">The Mechanics of Meta-Utopia<span class="dot-accent">?</span></span> Civilisation Design for Desirable Multi-Cultural Equilibria</div>
     
     <div class="sidebar-header">
       <span class="sidebar-title">Contents</span>
@@ -849,21 +963,22 @@
         <li><a href="#criteria" data-target="criteria">8<span class="dot-accent">.</span> Civilisation Design Criteria</a></li>
       </ul>
     </div>
-    
-    <!-- GIF positioned below the sidebar contents, independent of normal flow -->
-    <img src="Hex Grid Circular.gif" alt="Hex Grid Circular" id="sidebar-gif" class="sidebar-gif">
   </aside>
 
   <main class="main-wrapper">
-    <!-- TEXT COLUMN (Part 1) -->
     <div class="content">
       <div class="locked-title-box" id="titleSection">
         <div class="pre-title"><span class="dot-accent">&lt;</span> New Mechanisms<span class="dot-accent">:</span> An Introduction to Coordination (Studies) for the 21st Century <span class="dot-accent">&gt;</span></div>
         
-        <h1>The Mechanics of Meta-Utopia<span class="dot-accent">?:</span> Civilisation Design for Desirable Multi-Cultural Equilibria</h1>
+        <h1>The Mechanics of Meta-Utopia<span class="dot-accent">?</span> Civilisation Design for Desirable Multi-Cultural Equilibria</h1>
         <div class="subtitle">Revisiting the libertarian political philosophy of <em>Anarchy, State and Utopia</em> in light of post-AGI cultural dynamics, defensive accelerationism and pluralistic alignment</div>
         <div class="meta">
-          <span class="author-name">Max Ramsahoye</span>
+          <span class="author-name">Max Ramsahoye 
+            <span class="info-wrapper">
+              <span class="info-icon">i</span>
+              <span class="hoverbox">Contribution: The subsection <em>The Symmetry Problem: Monocultural Takeover vs Meta-Dystopian Enclosure</em> was authored by Aaron Aggarwal.</span>
+            </span>
+          </span>
           <span>2026</span>
         </div>
       </div>
@@ -892,12 +1007,12 @@
         <p>Principally, the <em>next-generation macrostrategy</em> institute <em>Forethought</em>, directed by MacAskill (co-founder of EA), have initiated a research agenda for navigating ‘the transition to a <em>post-AGI society</em>’ oriented around the novel frame of <em><a href="https://www.forethought.org/research/viatopia" class="inline-link" target="_blank">Viatopia</a></em>. A major desideratum for <em>Viatopia</em> is that it constitutes ‘a state of society… where many different moral points of view can flourish’. Here, MacAskill’s <em>Viatopia</em> can be genealogically situated as a higher-level <em>conceptual engineering</em> incorporating Nozick’s <em><a href="https://iep.utm.edu/noz-poli/#:~:text=Instead%2C%20he%20turns,of%20cultural%20relativism." class="inline-link" target="_blank">Meta-Utopia</a></em><span class="dot-accent">:</span> the ideal world-society according to libertarian political philosophy which proposes that ‘utopia will consist of utopias, of many different and divergent communities’.</p>
         <p>Based on a review of the literature within the <em>PARA-academic sphere</em> – the Progress (studies), AI alignment, Rationalist and Effective Altruist research communities – <em>meta-utopia</em>, as originally envisioned by Nozick, has arguably become the closest to a consensus view on what form a desirable <em>post-AGI society</em> should take and what a positive AI future would look like. Major materials representative of this consensus include<span class="dot-accent">:</span></p>
         <ul class="abstract-list">
-          <li>Alexander’s <em><a href="https://slatestarcodex.com/2014/06/07/archipelago-and-atomic-communitarianism/" class="inline-link" target="_blank">Archipelago & Atomic Communitarianism</a></em> (2014)</li>
-          <li>Duettmann’s <em><a href="https://www.lesswrong.com/s/9SJM9cdgapDybPksi" class="inline-link" target="_blank">Gaming the Future<span class="dot-accent">:</span> Technologies for Intelligent Voluntary Cooperation</a></em> (2022)</li>
-          <li>Tang’s <em><a href="https://www.plurality.institute/blog-posts/book-launch-plurality-the-future-of-collaborative-technology-and-democracy-by-e-glen-weyl-audrey-tang-and-the-plurality-community" class="inline-link" target="_blank">Plurality<span class="dot-accent">:</span> The Future of Collaborative Technology and Democracy</a></em> (2024).</li>
+          <li>Alexander’s <a href="https://slatestarcodex.com/2014/06/07/archipelago-and-atomic-communitarianism/" class="inline-link" target="_blank"><em>Archipelago & Atomic Communitarianism</em></a> (2014)</li>
+          <li>Duettmann’s <a href="https://www.lesswrong.com/s/9SJM9cdgapDybPksi" class="inline-link" target="_blank"><em>Gaming the Future<span class="dot-accent">:</span> Technologies for Intelligent Voluntary Cooperation</em></a> (2022)</li>
+          <li>Tang’s <a href="https://www.plurality.institute/blog-posts/book-launch-plurality-the-future-of-collaborative-technology-and-democracy-by-e-glen-weyl-audrey-tang-and-the-plurality-community" class="inline-link" target="_blank"><em>Plurality<span class="dot-accent">:</span> The Future of Collaborative Technology and Democracy</em></a> (2024).</li>
         </ul>
         <p>Despite this there has been minimal research to critically and systematically examine the <em>mechanics of meta-utopia</em><span class="dot-accent">:</span> how a future post-AGI world-system, as a sociotechnical architecture, functions to mediate the interaction between multiple cultures (epistemologies, ontologies, axiologies) and translate the <em><a href="https://www.lesswrong.com/w/complexity-of-value" class="inline-link" target="_blank">complexity of values</a></em> into a dynamic, <em><a href="https://plato.stanford.edu/entries/rawls/#StaOveCon" class="inline-link" target="_blank">overlapping consensus</a></em>. In other words, how civilisation can sustain a <em>progressive form of pluralism</em> at a civilisational-scale, over long-term time horizons (ge geopolitically and spatio-temporally).</p>
-        <p>As we see it, this is the ultimate project of steering towards <em>desirable civilisational equilibria</em> – and as such, it will inevitably be beyond the scope of this material to provide a sufficient answer. Nonetheless, we aim to formulate the primary constraints, criteria and catastrophes for such a world-system and in doing so formalise an ambitious paradigm for future <em><a href="https://civilizationemerging.com/category/civilization-design/" class="inline-link" target="_blank">civilisation design</a></em> and <em><a href="https://gradual-disempowerment.ai/mitigating-the-risk" class="inline-link" target="_blank">civilisation alignment</a></em> research. The most useful starting point for our purposes is Hanson’s short essay <em>Utopia’s Garden, World, and Wall</em> (2020), which we turn to next.</p>
+        <p>As we see it, this is the ultimate project of steering towards <em>desirable civilisational equilibria</em> – and as such, it will inevitably be beyond the scope of this material to provide a sufficient answer. Nonetheless, we aim to formulate the primary constraints, criteria and catastrophes for such a world-system and in doing so formalise an ambitious paradigm for future <em><a href="https://civilizationemerging.com/category/civilization-design/" class="inline-link" target="_blank">civilisation design</a></em> and <em><a href="https://gradual-disempowerment.ai/mitigating-the-risk" class="inline-link" target="_blank">civilisation alignment</a></em> research. The most useful starting point for our purposes is Hanson’s short essay <a href="https://www.overcomingbias.com/p/utopias-garden-world-and-wallhtml" class="inline-link" target="_blank"><em>Utopia’s Garden, World, and Wall</em></a> (2020), which we turn to next.</p>
       </section>
       
       <section id="mechanics" class="scroll-section">
@@ -932,7 +1047,6 @@
       </section>
     </div>
 
-    <!-- WIREFRAME DIAGRAM BREAKOUT SECTION -->
     <div class="mechanics-diagram-breakout">
       <div class="wireframe-wrapper" id="matrix-wrapper">
         <div class="axis-label y-axis">Cultural Integrity</div>
@@ -941,47 +1055,46 @@
 
         <div class="wireframe-container">
           
-          <!-- Top Left L-Shape -->
           <div class="wf-cell wf-tl">
             <div class="wf-content">
-              <div class="flow-br"></div>
-              <h4>Meta-Dystopian Enclosure</h4>
-              <span class="sub-title"><span class="dot-accent">(</span>Localised lock-ins<span class="dot-accent">)</span></span>
-              <p>The transition to a defense-dominant, maximally decentralised world-system where every sub-topia is a completely closed system with memetic transmission and physical migration rendered functionally impossible.</p>
+              <div class="text-content">
+                <h4>Meta-Dystopian Enclosure</h4>
+                <span class="sub-title"><span class="dot-accent">(</span>Localised lock-ins<span class="dot-accent">)</span></span>
+                <p>The transition to a defense-dominant, maximally decentralised world-system where every sub-topia is a completely closed system with memetic transmission and physical migration rendered functionally impossible.</p>
+              </div>
             </div>
           </div>
 
-          <!-- Top Right L-Shape -->
           <div class="wf-cell wf-tr">
             <div class="wf-content">
-              <div class="flow-bl"></div>
-              <h4>Meta-Utopian Uplift</h4>
-              <span class="sub-title"><span class="dot-accent">(</span>Epistemic Equilibria<span class="dot-accent">)</span></span>
-              <p>The transition to a semi-compartmentalised world-system with boundaries open enough for multi-culturalism, freedom of movement and moral progress, but sufficiently protected to prevent hostile cultural takeover.</p>
+              <div class="text-content">
+                <h4>Meta-Utopian Uplift</h4>
+                <span class="sub-title"><span class="dot-accent">(</span>Epistemic Equilibria<span class="dot-accent">)</span></span>
+                <p>The transition to a semi-compartmentalised world-system with boundaries open enough for multi-culturalism, freedom of movement and moral progress, but sufficiently protected to prevent hostile cultural takeover.</p>
+              </div>
             </div>
           </div>
 
-          <!-- Bottom Left L-Shape -->
           <div class="wf-cell wf-bl">
             <div class="wf-content">
-              <div class="flow-tr"></div>
-              <h4>Cultural Collapse</h4>
-              <span class="sub-title"><span class="dot-accent">(</span>Permanent Plateau<span class="dot-accent">)</span></span>
-              <p>A null state where all sub-topias have lost their coherent, collective, cultural identity and localised lock-downs prevent the creation of new sub-topias, leading to civilisational stagnation by default.</p>
+              <div class="text-content">
+                <h4>Cultural Collapse</h4>
+                <span class="sub-title"><span class="dot-accent">(</span>Permanent Plateau<span class="dot-accent">)</span></span>
+                <p>A null state where all sub-topias have lost their coherent, collective, cultural identity and localised lock-downs prevent the creation of new sub-topias, leading to civilisational stagnation by default.</p>
+              </div>
             </div>
           </div>
 
-          <!-- Bottom Right L-Shape -->
           <div class="wf-cell wf-br">
             <div class="wf-content">
-              <div class="flow-tl"></div>
-              <h4>Mono-Cultural Takeover</h4>
-              <span class="sub-title"><span class="dot-accent">(</span>Gray Goo<span class="dot-accent">)</span></span>
-              <p>An expansionist culture or an invasive memetic replicator breaks out of one sub-topia and colonises all others, proliferating to the point of extreme cultural homogeneity across the entire civilisation.</p>
+              <div class="text-content">
+                <h4>Mono-Cultural Takeover</h4>
+                <span class="sub-title"><span class="dot-accent">(</span>Gray Goo<span class="dot-accent">)</span></span>
+                <p>An expansionist culture or an invasive memetic replicator breaks out of one sub-topia and colonises all others, proliferating to the point of extreme cultural homogeneity across the entire civilisation.</p>
+              </div>
             </div>
           </div>
 
-          <!-- Wide Central Box -->
           <div class="wf-cell wf-center">
             <div class="wf-content">
               <h4>Clash of Civilisations</h4>
@@ -998,7 +1111,6 @@
       </div>
     </div>
 
-    <!-- TEXT COLUMN (Part 2) -->
     <div class="content">
       <section id="clash" class="scroll-section">
         <h2>2<span class="dot-accent">.</span> The Clash of Civilisations<span class="dot-accent">:</span> Cultural Competition & Conflict</h2>
@@ -1015,9 +1127,9 @@
       
       <section id="takeover" class="scroll-section">
         <h2>3<span class="dot-accent">.</span> Mono-Cultural Takeover<span class="dot-accent">:</span> Gray Goo</h2>
-        <p>Throughout the history of civilisation, the political and cultural reach of empires was limited by technological immaturity. To visualise this topologically, the cultural landscape was divided into subcultural regions, all mutually inaccessible to each other. Since the emergence of our current globalised civilisation (Mcluhan’s ‘global village’), memes can now proliferate anywhere and everywhere and the sphere of soft power can extend to encompass the entire world.</p>
+        <p>Throughout the history of civilisation, the political and cultural reach of empires was limited by <em>technological immaturity</em>. To visualise this topologically, the cultural landscape was divided into subcultural regions, all mutually inaccessible to each other. Since the emergence of our current globalised civilisation (Mcluhan’s ‘global village’), memes can now proliferate anywhere and everywhere and the sphere of soft power can extend to encompass the entire world.</p>
         
-        <p>Enabled by advanced AI, the ultimate endgame of expansionist, universalist cultures – global cultural hegemony – could become a plausible scenario. We call this <em>monocultural takeover</em><span class="dot-accent">:</span> a parallel to AI takeover and human takeover, emphasising the cultural dimension over the political, where a single culture becomes dominant at a civilisation-scale and eliminates all cultural variation. There are three, potentially overlapping sub-scenarios of monocultural takeover<span class="dot-accent">:</span> <em>runaway replicators</em>, <em>soft superpower</em> and <em>unidimensional utopia</em>.</p>
+        <p>Enabled by advanced AI, the ultimate endgame of expansionist, universalist cultures – global cultural hegemony – could become a plausible scenario. We call this <strong><em>monocultural takeover</em></strong><span class="dot-accent">:</span> a parallel to AI takeover and human takeover, emphasising the cultural dimension over the political, where a single culture becomes dominant at a civilisation-scale and eliminates all cultural variation. There are three, potentially overlapping sub-scenarios of monocultural takeover<span class="dot-accent">:</span> <em>runaway replicators</em>, <em>soft superpower</em> and <em>unidimensional utopia</em>.</p>
         
         <h4>Runaway Replicators (Selection)</h4>
         <p>An adaptive <a href="https://en.wikipedia.org/wiki/Memeplex" class="inline-link" target="_blank">memeplex</a> proliferates to the point of extreme cultural homogeneity, effectively creating the memetic equivalent in mind-space of a ‘grey goo’ scenario (Drexler), where a physical replicator consumes all resources in the universe. No single agent necessarily intends for one memeplex to rule them all, but competitive multi-agent dynamics and emergent selection pressures against competing variants leads to the most efficient replicator colonising the entire cultural landscape. Technologically, this ultimately results from a failure of <em>defensive accelerationism</em> or <em>differential technological development</em> where weaponry (‘spears’) outcompetes defenses (‘shields’) in memetic warfare. Just as advanced AI enables the design of biological superviruses, it also enables the design of memetic mind-viruses that rapidly spread across a population.</p>
@@ -1043,32 +1155,33 @@
         
         <p>A predictable reaction to the risk of <em>cultural extinction</em> from monocultural takeover, is to construct technological defenses against memetic invasion (‘shields’).This form of <em>memetic defensive accelerationism</em> aims to shift civilisation into a defense-dominant condition where states can effectively wall themselves off from the outside world (zero permeability) to prevent exposure to alien influences and protect their own cultural identity. Whilst the endgame of this strategy is an impervious barrier that guarantees total isolation, there are already strong instances of memetic shields in our civilisation today.</p>
 
+        <p>Sadly, despite Barlow’s <a href="https://www.eff.org/cyberspace-independence" class="inline-link" target="_blank"><em>Declaration of the Independence of Cyberspace</em></a>, the totalitarian ‘Governments of the Industrial World… weary giants of flesh and steel’ appear intent on controlling the information landscape for national <a href="https://www.cogsec.org/what-is-cognitive-security-5" class="inline-link" target="_blank">cognitive security</a> (CogSec), posing the risk of ‘stable totalitarianism’, post-AGI.</p>
+        
+        <p>Whilst these examples are from autocratic regimes, democracies are also threatened by foreign interference and may be compelled by AI-enhanced cyberattacks and <a href="https://consilienceproject.org/its-a-mad-information-war/" class="inline-link" target="_blank">MAD information warfare</a> to also separate and securitise their own intranets.</p>
+        
+        <p>As the virtual imposes on the real (Baudrillard’s ‘hyper-reality’), the risk of physical migration enabling digital infiltration – agents of states entering other states to compromise their cognitive security or more passively, migrants exerting cultural influence over the host culture – may demand strict border control, even to the point of an absolute no-entry policy.</p>
+        
+        <p>The final attractor state of this trajectory we diagnose as <strong><em>meta-dystopian enclosure</em></strong><span class="dot-accent">:</span> a future maximally decentralised world-system where every state is a completely closed system, where lock-downs are total and escape is functionally impossible.</p>
+        
         <ul class="abstract-list">
-          <li><strong>The Great Firewall of China (GFW), or Golden Shield Project<span class="dot-accent">:</span></strong> a massive, state-run internet censorship and regulation system managed by the <em>Cyberspace Administration of China</em> (since 1998) to block foreign websites and filter content deemed inappropriate, creating a controlled, domestic intranet.</li>
-          <li><strong>The Iranian National Information Network<span class="dot-accent">:</span></strong> an ongoing project managed by <em>The Supreme Council of Cyberspace</em> of Iran to develop an <a href="https://www.wired.com/story/irans-digital-surveillance-machine-is-almost-complete/" class="inline-link" target="_blank">Iranian intranet</a> ‘which allows for data requests to avoid being routed outside of the country’.</li>
+          <li><strong>AI-Policed Digital Borders<span class="dot-accent">:</span></strong> could screen every piece of incoming information and direct brain-writing could even completely prevent external memetics from ‘corrupting’ a state's population.</li>
+          <li><strong>AI-Enabled Mind-Design<span class="dot-accent">:</span></strong> in the limit, states could manufacture members whose values are aligned by construction, eliminating the desire to leave beyond merely physically preventing it.</li>
         </ul>
         
-        <p>Sadly, despite Barlow’s <a href="https://www.eff.org/cyberspace-independence" class="inline-link" target="_blank"><em>Declaration of the Independence of Cyberspace</em></a>, the totalitarian ‘Governments of the Industrial World… weary giants of flesh and steel’ appear intent on controlling the information landscape for national <a href="https://www.cogsec.org/what-is-cognitive-security-5" class="inline-link" target="_blank">cognitive security</a> (CogSec), posing the risk of ‘stable totalitarianism’, post-AGI. Whilst these examples are from autocratic regimes, democracies are also threatened by foreign interference and may be compelled by AI-enhanced cyberattacks and <a href="https://consilienceproject.org/its-a-mad-information-war/" class="inline-link" target="_blank">MAD information warfare</a> to also separate and securitise their own intranets. As the virtual imposes on the real (Baudrillard’s ‘hyper-reality’), the risk of physical migration enabling digital infiltration – agents of states entering other states to compromise their cognitive security or more passively, migrants exerting cultural influence over the host culture – demands strict border control, even to the point of an absolute no-entry policy.</p>
-        
-        <p>The final attractor state of this trajectory we diagnose as <em>meta-dystopian enclosure</em><span class="dot-accent">:</span> a future maximally decentralised world-system where every state is a completely closed system, where lock-downs are total and escape is functionally impossible.</p>
-        
-        <ul class="abstract-list">
-          <li>AI-policed digital borders could screen every piece of incoming information and direct brain-writing could even completely prevent external memetics from ‘corrupting’ a state's population.</li>
-          <li>In the limit, states with access to mind-design could manufacture members whose values are aligned by construction, eliminating the desire to leave beyond merely physically preventing it.</li>
-        </ul>
+        <h4>Subtle Meta-Dystopias<span class="dot-accent">:</span> Meta-Utopian Enclosure & Perpetual Pluralism</h4>
         
         <p>Over the long-term future, if we extrapolate the current condition, this would result in a mixed landscape of utopias and dystopias, a stable state where neither good societies or harmful societies can expand their spheres of soft power and cultural influence.</p>
 
-        <p>If we assume optimistically that the meta-system could be composed solely of sub-utopias, the lesser moral catastrophe here is a condition of <strong><em>perpetual pluralism</em></strong><span class="dot-accent">:</span> where cultural variation persists indefinitely with no reflective selection process to optimise the parameters of civilisation, reducing the number of subutopias to include only the most morally advanced and, in turn, make moral progress.</p>
+        <p>If it miraculously happens that (1) all sub-topias are sub-utopias and there are no sub-dystopias and (2) all populations are in the sub-utopia they want to be in, then this <strong><em>meta-utopian enclosure</em></strong> scenario would be moderately good. Even in this scenario however, the meta-dystopian element is not being able to move to a new sub-utopia, an inability to leave due to hyper-defensive governance against memetic competition.</p>
         
-        <p>If it miraculously happens that (1) all sub-topias are sub-utopias and there are no sub-dystopias and (2) all populations are in the sub-utopia they want to be in, then this scenario would be moderately good. Even in this scenario however, the meta-dystopian element is not being able to move to a new sub-utopia, an inability to leave due to hyper-defensive governance against memetic competition.</p>
+        <p>If we the meta-system could be composed solely of sub-utopias, the lesser moral catastrophe here is a condition of <strong><em>perpetual pluralism</em></strong><span class="dot-accent">:</span> where cultural variation persists indefinitely with no reflective selection process to optimise the parameters of civilisation, refining the set of subutopias to include only the most morally advanced to realise moral progress.</p>
       </section>
       
       <section id="collapse" class="scroll-section">
         <h2>5<span class="dot-accent">.</span> Cultural Collapse<span class="dot-accent">:</span> Permanent Plateau</h2>
         <p>After the fall of the Western Roman Empire, for five hundred to a thousand years (depending on historical interpretation) medieval Europe existed in a period of technological and cultural stagnation. These ‘Dark Ages’, compared to the "light" of classical antiquity, were eventually ended by renewed contact with the Islamic and Byzantine world which had not just preserved ancient Greek philosophy, but elaborated upon it. This ‘Renaissance’ (‘rebirth’) between the 14th-17th centuries was succeeded by the Enlightenment, a period of scientific, technological and moral progress which seeded <em>modernity</em> as we know it: giving rise to a liberal and cosmopolitan international society that, in principle if not (yet) in practice, holds freedom – of thought, belief and speech – as fundamental human rights.</p>
         
-        <p>As explored in the previous section, if meta-dystopian enclosure occurs and all states lock-down into separate enclaves, the lack of external influences could result in localised value lock-ins and cultural stagnation on a global-level. If at the same time, the internal institutions of social reproduction within states fail – to preserve their beliefs, values and practices – this state of cultural stagnation could devolve further into a permanent state of <em>cultural collapse</em>: a null state where all cultures have lost coherent collective identities and are unable to restore them or create new ones. Imagine a Dark Ages, but not just within Europe, but (1) everywhere all at once, and (2) not just for a millennium but for millions of years – and with no influence from outside ever coming to restore <em>the light</em>. Beyond this scenario of <em>Unrecoverable (Cultural) Collapse</em>, we can also foresee scenarios of <em>Recoverable</em> and <em>Recurrent Collapse</em>:</p>
+        <p>As explored in the previous section, if meta-dystopian enclosure occurs and all states lock-down into separate enclaves, the lack of external influences could result in localised value lock-ins and cultural stagnation on a global-level. If at the same time, the internal institutions of social reproduction within states fail – to preserve their beliefs, values and practices – this state of cultural stagnation could devolve further into a permanent state of <em>cultural collapse</em>: a null state where all cultures have lost coherent collective identities and are unable to restore them or create new ones. Imagine a Dark Ages, but not just within Europe, but (1) everywhere all at once, and (2) not just for a millennium but for millions of years – and with no influence from outside ever coming to restore <em>the light</em>. Beyond this scenario of unrecoverable collapse, we can also foresee scenarios of recoverable and recurrent collapse:</p>
         
         <p><strong>Unrecoverable Collapse (Permanent Plateau)<span class="dot-accent">:</span></strong> a permanent null state where the internal institutions of pattern maintenance fail so completely that the necessary knowledge, values, or ambition for cultural experimentation is lost. Enclosure ensures that no external culture can provide a restorative influence, sealing civilization’s fate into an indefinite, low-potential stasis. This corresponds to what Fischer (Capitalist Realism, 2009) has called ‘the cancellation of the future’ or ‘lost futures’ , where there is a pervading ‘feeling that there is nothing new’.</p>
         
@@ -1085,9 +1198,9 @@
         
         <p>Perhaps the most important measure of meta-utopia is freedom of movement, the ability to choose which society to live in. In this respect, whilst there are international zones, such as the Schengen Area in Europe, national borders and varied immigration policies means that the ideal of freedom of movement is far from fully realised. Further, as the vast majority of land is owned by existing states there is no new territory or provision of resources for people to start new kinds of societies. Based on these two characteristics – the <em>restriction of movement</em> across existing societies and the lack of a <em>right of exit</em> to create new societies – the current world-system appears to be closer to a form of meta-dystopia.</p>
         
-        <p>From this condition, we can envision a positive scenario of <em>meta-utopian uplift</em>: the transition to a semi-compartmentalised world-system sustaining <em>multi-cultural equilibria</em> with boundaries open enough for freedom of movement and moral progress (avoiding meta-dystopia), but sufficiently protected to prevent cultural dilution (avoiding monocultural takeover). This could arise from AI-enhanced international diplomacy facilitating greater cross-cultural cooperation and consensus to protect Westphalian principles and improve the existing liberal international order.</p>
+        <p>From this condition, we can envision a positive scenario of <strong><em>meta-utopian uplift</em></strong>: the transition to a semi-compartmentalised world-system sustaining <em>multi-cultural equilibria</em> with boundaries open enough for freedom of movement and moral progress (avoiding meta-dystopia), but sufficiently protected to prevent cultural dilution (avoiding monocultural takeover). This could arise from AI-enhanced international diplomacy facilitating greater cross-cultural cooperation and consensus to protect Westphalian principles and improve the existing liberal international order.</p>
         
-        <h3>Rational Convergence on Meta-Utopia as Minimal Geopolitical Structure</h3>
+        <h4>Rational Convergence on Meta-Utopia as Minimal Geopolitical Structure</h4>
         <p>As meta-utopia includes many sub-utopias and requires a minimal form of agreement (in <em>sovereignty</em> and non-interference), <em>meta-utopian uplift</em> could be deemed a desirable change for many different states and actors and from many different moral standpoints. For instance, both right-libertarianism emphasising the value of negative freedom (freedom from) and left-wokeism (critical social theory) emphasising the value of cultural diversity, converge on meta-utopia as a political ideal (horseshoe theory).</p>
         
         <p>Even expansionist, universalist cultures – that would enact a monocultural takeover if powerful enough – may be amenable to meta-utopia as a bargain with rival mono-topians and meta-utopians to avoid conflict, protect their own culture and secure their own region of control (subutopia); adhering to the maxim that ‘something is better than nothing’. However, even if they agree to not being functionally expansionist (which could be deceptive to stay in the game) and can be effectively contained, it still could be a potential threat (absent 100% security) or an undesirable phenomenological condition to want to take over the world, but be unable to do so.</p>
@@ -1100,12 +1213,12 @@
         <h3>Navigating the ‘Narrow Cultural Corridor’</h3>
         <p>The governance of cultural evolution must navigate between <em>pluralistic libertarianism</em>, a minimalist <em>laissez-faire</em> approach which allows a <em>global poly-culture</em> (extreme heterogenisation) to persist without progress and <em>benevolent paternalism</em>, a maximalist <em>interventionist</em> approach which enforces a <em>global monoculture</em> (extreme homogenisation), ending multi-cultural diversity. Both lead to moral stagnation and the flawed realisation of civilisation’s potential.</p>
         
-        <p>The parameters of diversity within meta-utopia need to be specified as the ideal goldilocks zone for engineered cultural lock-in is (1) not an extreme monoculture that excludes morally valuable cultures or (2) an extreme polyculture that includes morally disvaluable cultures. Cultural homogeneity and heterogeneity have two different failure modes: simply put, exclusion of the good and inclusion of the bad. Governance must avoid both <em>cultural existential risks</em> simultaneously. The middle path to achieve this we call <em>autopoetic alignment</em>. These three approaches act as poles defining the possible approaches to managing post-AGI cultural dynamics:</p>
+        <p>The parameters of diversity within meta-utopia need to be reflected upon as the ideal goldilocks zone for designed cultural lock-in is (1) not an extreme monoculture that excludes morally valuable cultures or (2) an extreme polyculture that includes morally disvaluable cultures. Cultural homogeneity and heterogeneity have two different failure modes: simply put, exclusion of the good and inclusion of the bad. Governance must avoid both <em>cultural existential risks</em> simultaneously. The middle path to achieve this we call <em>autopoetic alignment</em> (though we leave it underspecified here).</p>
         
         <ul class="abstract-list">
           <li><strong>Pluralistic Libertarianism (<em>The Absentee Leviathan</em>)<span class="dot-accent">:</span></strong> maximize individual liberty and cultural variation, relying on decentralized emergent order.</li>
           <li><strong>Benevolent Paternalism (<em>The Despotic Leviathan</em>)<span class="dot-accent">:</span></strong> enforce a globally optimal culture through centralized authority to prevent divergence.</li>
-          <li><strong>Autopoetic Alignment (<em>Post-Leviathan?</em>)<span class="dot-accent">:</span></strong> sustain multi-cultural equilibria through continuous, decentralised self-correction.</li>
+          <li><strong>Autopoetic Alignment (<em>Post-Leviathan?</em>)<span class="dot-accent">:</span></strong> sustain multi-cultural equilibria through continuous, holarchical self-correction.</li>
         </ul>
         
         <h3>The Symmetry Problem<span class="dot-accent">:</span> Monocultural Takeover vs Meta-Dystopian Enclosure</h3>
@@ -1122,38 +1235,52 @@
         <p>Based on the scenarios introduced in this research article, we can derive criteria for what constitutes a viable civilisation design and transitional strategy to navigate towards it. In other words, a theory of cultural and institutional change for humanity to safely arrive at meta-utopia.</p>
         
         <h3>Design Criteria<span class="dot-accent">:</span> for a Viable World-System</h3>
-        <p><strong>World Democratic Federation for an Open Society<span class="dot-accent">:</span></strong> to realise meta-utopia, the westphalian system of sovereign states must evolve into a political structure more closely resembling a democratic world-federation. This is necessary to support freedom of information, movement and association across sub-topias which current nationalist citizenship laws restrict.</p>
-        <ul class="abstract-list">
-          <li><strong>Freedom of Exit and Entry<span class="dot-accent">:</span></strong> To prevent the structural entrapment of meta-dystopia (localised lock-ins), the transitional process must legally protect freedom of movement for individuals between sub-topias. Furthermore, a mechanism for the creation of new sub-topias must be secured, providing a true right of exit for groups dissatisfied with all existing options. At this point in time, charter cities are the closest approximation to such a mechanism.</li>
-        </ul>
-        <p><strong>Containment of Expansionist Cultures<span class="dot-accent">:</span></strong> The meta-utopian system requires robust mechanisms to contain cultures that exhibit strong, universalist, or expansionist tendencies. This containment is necessary to prevent any single culture from achieving monocultural takeover and hegemonically imposing its worldview. The goal is the regulation of cultural influence, ensuring an epistemic commons where competition occurs without one group being able to violate the sovereignty or cultural integrity of others.</p>
-        <ul class="abstract-list">
-          <li><strong>Defensive Accelerationism<span class="dot-accent">:</span></strong> The overarching system must ensure a defense-dominant technological landscape in the memetic domain. This means that "shields" (defensive technologies against memetic infiltration) must be reliably superior to "spears" (memetic weaponry). Without a stable, defense-dominant equilibrium, the containment of expansionist cultures' is functionally impossible. If memetic offense outpaces defense, then expansionist cultures, which seek to impose their values universally , cannot be merely contained within the meta-utopian architecture. The existential threat they pose to meta-utopia, necessitates their exclusion from the cooperative structure (or even elimination) to prevent system-wide collapse into a global monoculture. A robust defense-dominant paradigm is the only way to facilitate high permeability (free movement and information flow) without risking dissolution into a single, dominant culture.</li>
-          <li>A moral parliament of AI representatives may be useful, even necessary (due to computational complexity constraints) to facilitate effective, non-biased cross-cultural dialogue and decision-making at a civilizational scale. These AI agents, potentially granted legal personhood, would be designed to accurately model and advocate for the values, goals, and existential concerns of their respective cultures, mediating disputes and aiding the formation of consensus (or ‘coherent blended volition’).</li>
-          <li><strong>Coherent blended volition (CBV)</strong> proposes a creative blending process that produces new, harmonious value systems that all participants would recognize as adequately representing their contributions. (<a href="https://ai-safety-atlas.com/chapters/v1/strategies/appendix-long-term-questions/#alignment-to-what" class="inline-link" target="_blank">AI Safety Atlas, 2025</a>)</li>
-        </ul>
+        
+        <h4>World Democratic Federation for an Open Society</h4>
+        <p>To realise meta-utopia, the Westphalian system of sovereign states must evolve into a political structure more closely resembling a democratic world-federation. This is necessary to support freedom of information, movement and association across sub-topias which current nationalist citizenship laws restrict.</p>
+        
+        <p><strong>freedom of exit and entry<span class="dot-accent">:</span></strong> To prevent the structural entrapment of meta-dystopia (localised lock-ins), the transitional process must legally protect freedom of movement for individuals between sub-topias. Furthermore, a mechanism for the creation of new sub-topias must be secured, providing a true right of exit for groups dissatisfied with all existing options. At this point in time, charter cities are the closest approximation to such a mechanism.</p>
+        
+        <h4>Containment of Expansionist Cultures</h4>
+        <p>The meta-utopian system requires robust mechanisms to contain cultures that exhibit strong, universalist, or expansionist tendencies. This containment is necessary to prevent any single culture from achieving monocultural takeover and hegemonically imposing its worldview. The goal is the regulation of cultural influence, ensuring an epistemic commons where competition occurs without one group being able to violate the sovereignty or cultural integrity of others.</p>
+        
+        <p><strong>Defensive Accelerationism<span class="dot-accent">:</span></strong> The overarching system must ensure a defense-dominant technological landscape in the memetic domain. This means that "shields" (defensive technologies against memetic infiltration) must be reliably superior to "spears" (memetic weaponry). Without a stable, defense-dominant equilibrium, the containment of expansionist cultures is functionally impossible. If memetic offense outpaces defense, then expansionist cultures, which seek to impose their values universally , cannot be merely contained within the meta-utopian architecture. The existential threat they pose to meta-utopia, necessitates their exclusion from the cooperative structure (or even elimination) to prevent system-wide collapse into a global monoculture. A robust defense-dominant paradigm is the only way to facilitate high permeability (free movement and information flow) without risking dissolution into a single, dominant culture.</p>
+        
+        <h4>Moral Parliament of AI Representatives</h4>
+        <p>A moral parliament of AI representatives may be useful, even necessary (due to computational complexity constraints) to facilitate effective, non-biased cross-cultural dialogue and decision-making at a civilizational scale. These AI agents, potentially granted a form of legal personhood, would be designed to accurately model and advocate for the values, goals, and existential concerns of their respective cultures, mediating disputes and aiding the formation of consensus (or ‘coherent blended volition’).</p>
+        
+        <p><strong>Coherent blended volition (CBV)</strong> proposes a creative blending process that produces new, harmonious value systems that all participants would recognize as adequately representing their contributions. (<a href="https://ai-safety-atlas.com/chapters/v1/strategies/appendix-long-term-questions/#alignment-to-what" class="inline-link" target="_blank">AI Safety Atlas, 2025</a>)</p>
+        
         
         <h3>Transition Criteria<span class="dot-accent">:</span> Theory of Cultural Change & Civilisation Alignment</h3>
-        <p><strong>Evolutionary Stable Strategy<span class="dot-accent">:</span></strong> The transitional strategy to meta-utopia must be an evolutionary stable strategy (ESS): the process by which the target structure of high integrity and high permeability is achieved must be resistant to invading strategies that would default to monocultural takeover or meta-dystopian lock-in. The arrangement must be self-stabilising, where the optimal local strategy for every sub-state is to maintain the overarching meta-utopian structure, making defection (either by enclosure or expansion) globally disadvantageous in the long-term.</p>
-        <p><strong>Non-Coercive Steering & Voluntary Cooperation<span class="dot-accent">:</span></strong> The transition towards meta-utopia must prioritize non-coercive steering and rely foundationally on voluntary cooperation between states, cultural groups and individuals. Any strategy involving centralized imposition or forced compliance risks violating human agency.* Advanced AI should be used to facilitate cooperation and consensus-building, demonstrating the clear mutual benefits of the meta-utopian arrangement rather than enforcing it through superior technological power.</p>
-        <ul class="abstract-list">
-          <li><strong>Liberalism vs Illiberalism<span class="dot-accent">:</span></strong> voluntary cooperation and non-coercive steering must be the default method for the transition, but this principle is conditional on sub-topias upholding minimum liberal standards, particularly the Freedom of Exit and Entry. If an illiberal regime uses the meta-utopian principle of non-interference to enforce a local lock-in and suppress the rights of its members, then the global governance responses may need to employ non-violent, strategically targeted interventions to dismantle the sub-dystopia and uphold the higher-order value of individual freedom and human agency, thus ensuring the transition is towards a legitimate landscape of utopias, and not a stable meta-dystopia.</li>
-        </ul>
-        <p><strong>Viatopia > Metautopia > Syntopia<span class="dot-accent">:</span></strong> Cultural transition should be viewed as a stadial process: from the current state (a world-system that is both good and bad, containing sub-utopias and sub-dystopias), to a stable Viatopia (minimum necessary coordination to achieve existential security) to Metautopia (an equilibrium between political and cultural groups), and finally, potentially, to a Syntopia (a future stage involving a consensual, dynamic synthesis of cultures). This approach positions full synthesis (Syntopia) as a longer-term goal and Metautopia as a more realistic and desirable vision based on the existing landscape of cultures and their interests.</p>
-        <ul class="abstract-list">
-          <li><strong>Syntopia<span class="dot-accent">:</span></strong> is an ideal civilisational endstate in which humanity has converged on a universal morality, ‘perennial philosophy’ and syncretic culture. All minds share in the truth (epistemics), goodness (ethics) and beauty (aesthetics) of a grand synthesis; which transcends and includes all worldviews from history into an emergent whole, aligned with the nature of interobjective reality and the conditions of existential flourishing. Life is lived pluralistically and dynamically without locking-in the future to a singular way of life or form of being, but instead oscillating between cultures across (what would for humans be multiple) lifetimes. Syntopia could potentially emerge from mass multi-directional migration and cultural cross-pollination over intergenerational time or from AI-enhanced epistemics at a civilisational-scale.</li>
-        </ul>
         
-        <h3>The Creation of a Meta-Utopian Institution<span class="dot-accent">:</span> A Compelling Candidate Project</h3>
+        <h4>Evolutionary Stable Strategy</h4>
+        <p>The transitional strategy to meta-utopia must be an <em>evolutionary stable strategy</em> (ESS): the process by which the target structure of high integrity and high permeability is achieved must be resistant to invading strategies that would default to monocultural takeover or meta-dystopian lock-in. The arrangement must be self-stabilising, where the optimal local strategy for every sub-state is to maintain the overarching meta-utopian structure, making defection (either by enclosure or expansion) globally disadvantageous in the long-term.</p>
+        
+        <h4>Non-Coercive Steering & Voluntary Cooperation</h4>
+        <p>The transition towards meta-utopia must prioritize non-coercive steering and rely foundationally on voluntary cooperation between states, cultural groups and individuals. Any strategy involving centralized imposition or forced compliance risks violating human agency. Advanced AI should be used to facilitate cooperation and consensus-building, demonstrating the clear mutual benefits of the meta-utopian arrangement rather than enforcing it through superior technological power.</p>
+        
+        <p><strong>Liberalism vs Illiberalism<span class="dot-accent">:</span></strong> whilst the default method for the transition, this principle is conditional on sub-topias upholding minimum liberal standards, particularly freedom of exit and entry. If an illiberal regime uses the meta-utopian principle of non-interference to enforce a local lock-in and suppress the rights of its members, then the global governance response may need to employ non-violent, strategically targeted interventions to dismantle the sub-dystopia and uphold the higher-order value of individual freedom and human agency, thus ensuring the transition is towards a legitimate landscape of utopias, and not a stable meta-dystopia.</p>
+        
+        <h4>Viatopia <span class="dot-accent" style="color: var(--accent-color);">&gt;</span> Metautopia <span class="dot-accent" style="color: var(--accent-color);">&gt;</span> Syntopia</h4>
+        <p>Cultural transition should be viewed as a stadial process: from the current state (a world-system that is both good and bad, containing sub-utopias and sub-dystopias), to a stable Viatopia (minimum necessary coordination to achieve existential security) to Metautopia (an equilibrium between political and cultural groups), and finally, potentially, to Syntopia (a future stage involving a consensual, dynamic synthesis of cultures). This positions full synthesis (Syntopia) as a longer-term goal and Metautopia as a more realistic and desirable vision based on the existing landscape of cultures and their interests.</p>
+        
+        <p><strong>Syntopia<span class="dot-accent">:</span></strong> is an ideal civilisational endstate in which humanity has converged on a universal morality, ‘perennial philosophy’ and syncretic culture. All minds share in the truth (epistemics), goodness (ethics) and beauty (aesthetics) of a grand synthesis; which transcends and includes all worldviews from history into an emergent whole, aligned with the nature of interobjective reality and the conditions of existential flourishing. Life is lived pluralistically and dynamically without locking-in the future to a singular way of life or form of being, but instead oscillating between cultures across (what would for humans be multiple) lifetimes. Syntopia could potentially emerge from mass multi-directional migration and cultural cross-pollination over intergenerational time or from AI-enhanced epistemics at a civilisational-scale.</p>
+        
+        <h3>The Creation of a Meta-Utopian Institution</h3>
         <div class="indented-quote">
           <em>The Internet Government</em> is a system of representation of perspectives, not people - a platform fed with crowd-sourced contributions of research, rhetoric, and reason. We separate the ideas from the individuals, and this allows us to coordinate more complex and comprehensive social and political debates between conflicting perspectives, ideologies, and ideas. By systematically classifying the uploaded ideas from citizens, we can distinguish between textbook logic and textbook logical fallacy, and identify our clash in values so that the arguing can stop and we can start ideating legislative solutions: solutions which work for all of us. We would no longer depend on majority-rule, but instead a more sophisticated mathematical threshold to determine what legislative solutions address all legitimate concerns. We don't have to agree, but we need to compromise and move forward. <em>The Internet Government</em> facilitates that. <em>The Internet Government's Abstract Meritocratic Model</em> is appropriate for high-level deliberations, such as between ideologies concerning human rights and resource issues as topics. As a model, its future is to be adapted and adopted to serve constituents of countries worldwide, as well as scale to enable a global conversation of human ideologies.
         </div>
-        <p>Finally, we point to a compelling candidate project for a new meta-utopian political institution, <strong><a href="https://www.internetgovernment.org/about-1" class="inline-link" target="_blank"><em>The Internet Government</em></a></strong> (2014): a participatory digital democracy for mediating communication, cooperation and consensus-building between cultures.</p>
+        <p>Finally, we point to a compelling candidate project for a new meta-utopian political institution, <strong><a href="https://www.internetgovernment.org/about-1" class="inline-link" target="_blank"><em>The Internet Government</em></a></strong>: a participatory digital democracy for mediating communication, cooperation and consensus-building between cultures.</p>
         
-        <p>This virtual variation of Alexander's ‘UniGov’ (2014) could use AGI agents as cultural representatives, (potentially with protected status via a form of legal personhood), effectively creating a ‘moral parliament’ for inter-cultural interactions and civilisation-scale decision-making to take place.</p>
+        <p>This variation of Alexander's ‘UniGov’ could use AGI agents as cultural representatives, effectively creating a virtual ‘moral parliament’ for inter-cultural interactions and civilisation-scale decision-making to take place.</p>
         
-        <p>Currently the project by <a href="https://www.societylibrary.org/" class="inline-link" target="_blank"><em>The Society Library</em></a> (2013) seems to still be in the early concept-stages, though we would like to see it advance further and begin to develop prototypes. With sufficient support – and integration with AI for democracy innovations (e.g <a href="https://pol.is/home" class="inline-link" target="_blank"><em>Polis</em></a>, <a href="https://thepoliticaltechnologist.substack.com/p/invitation-to-democratic-ai-series" class="inline-link" target="_blank"><em>Harmonica</em></a>, <a href="https://www.science.org/doi/10.1126/science.adq2852" class="inline-link" target="_blank"><em>the Habermas Machine</em></a>) – we believe it has the potential to contribute to a new operating system for steering civilisation towards <em>desirable multi-cultural futures</em>.</p>
+        <p>Currently the project by <a href="https://www.societylibrary.org/" class="inline-link" target="_blank"><em>The Society Library</em></a> (2013) seems to still be in the early concept-stages, though we would like to see it advance further and begin to develop prototypes. With sufficient support – and integration with other AI for democracy innovations (e.g <a href="https://pol.is/home" class="inline-link" target="_blank"><em>Polis</em></a>, <a href="https://thepoliticaltechnologist.substack.com/p/invitation-to-democratic-ai-series" class="inline-link" target="_blank"><em>Harmonica</em></a>, <a href="https://www.science.org/doi/10.1126/science.adq2852" class="inline-link" target="_blank"><em>the Habermas Machine</em></a>) – we believe it has the potential to contribute to a new operating system for steering civilisation towards <em>desirable multi-cultural futures</em>.</p>
       </section>
+      
+      <div class="footer">
+        <img src="NCC.png" alt="NCC Logo" class="footer-logo">
+      </div>
     </div>
   </main>
   
@@ -1178,30 +1305,17 @@
     }, 1500); 
   });
 
+  const themeToggle = document.getElementById('themeToggle');
+  themeToggle.addEventListener('click', () => {
+    document.documentElement.classList.toggle('dark-theme');
+  });
+
   // Sidebar Toggle Logic
   const sidebar = document.getElementById('research-sidebar');
   
   document.getElementById('toggle-btn').addEventListener('click', function() {
     sidebar.classList.toggle('collapsed');
     document.body.classList.toggle('sidebar-collapsed');
-  });
-
-  const aboutLink = document.getElementById('about-link');
-  const header = document.querySelector('header');
-
-  aboutLink.addEventListener('mouseenter', function(e) {
-    header.classList.add('about-open');
-    this.classList.add('active-link');
-    this.textContent = 'Context & Contributions';
-  });
-
-  // Close the about section when moving the mouse off the header area
-  header.addEventListener('mouseleave', function() {
-    if (header.classList.contains('about-open')) {
-      header.classList.remove('about-open');
-      aboutLink.classList.remove('active-link');
-      aboutLink.textContent = 'About';
-    }
   });
 
   window.addEventListener('scroll', function() {
