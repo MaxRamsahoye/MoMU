@@ -88,14 +88,6 @@
   body.loading-active {
     overflow: hidden;
   }
-  
-  /* Added filter transition to smooth out image inverts */
-  .logo-image,
-  .footer-logo,
-  .sidebar-gif,
-  .loading-gif {
-    transition: filter 0.4s ease;
-  }
 
   /* Image invert for dark theme with screen blend mode to strip the bounding box */
   html.dark-theme .logo-image,
@@ -192,7 +184,7 @@
     clip-path: polygon(0 0, 100% 0, 0 100%, 0 100%);
     z-index: 0;
     pointer-events: none;
-    transition: background-color 0.4s ease; /* Synced up with standard transition speed */
+    transition: background-color 0.4s ease; 
   }
   
   .theme-toggle {
@@ -1512,6 +1504,21 @@
     });
   });
 
+  // Calculate the absolute bottom of the title box for scroll events
+  let titleBottom = 0;
+  const titleSection = document.getElementById('titleSection');
+  
+  function updateTitleBottom() {
+    if (titleSection) {
+      titleBottom = titleSection.getBoundingClientRect().bottom + window.pageYOffset;
+    }
+  }
+
+  // Calculate accurately when loaded and if window is resized
+  window.addEventListener('load', updateTitleBottom);
+  window.addEventListener('resize', updateTitleBottom);
+  updateTitleBottom();
+
   window.addEventListener('scroll', function() {
     const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
     
@@ -1521,13 +1528,15 @@
     document.getElementById('scrollProgress').style.height = scrollPercent + '%';
 
     // 2. Track when scrolled past the title section for back-to-top button
-    const titleSection = document.getElementById('titleSection');
-    const titleBottom = titleSection.offsetTop + titleSection.offsetHeight;
     const scrollTopBtn = document.getElementById('scrollTopBtn');
+    const sidebarMiniTitle = document.getElementById('sidebarMiniTitle');
+
     if (scrollTop > titleBottom) {
       scrollTopBtn.classList.add('visible');
+      if (sidebarMiniTitle) sidebarMiniTitle.classList.add('visible');
     } else {
       scrollTopBtn.classList.remove('visible');
+      if (sidebarMiniTitle) sidebarMiniTitle.classList.remove('visible');
     }
   });
 
@@ -1579,6 +1588,7 @@
     rootMargin: '-10% 0px -70% 0px', 
     threshold: 0
   };
+  
   const sectionObserver = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
@@ -1597,6 +1607,32 @@
   sections.forEach(section => {
     sectionObserver.observe(section);
   });
+
+  // Intersection Observer to Auto-Close Sidebar when Matrix is in View
+  const matrixEl = document.getElementById('matrix-wrapper');
+  const sidebar = document.getElementById('research-sidebar');
+
+  const matrixObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      // Avoid auto-toggling logic colliding on mobile widths where sidebar is hidden
+      if (window.innerWidth > 1024) {
+        if (entry.isIntersecting) {
+          sidebar.classList.add('collapsed');
+          document.body.classList.add('sidebar-collapsed');
+        } else {
+          sidebar.classList.remove('collapsed');
+          document.body.classList.remove('sidebar-collapsed');
+        }
+      }
+    });
+  }, {
+    root: null,
+    threshold: 0.2 // Triggers when 20% of the table is visible
+  });
+
+  if (matrixEl) {
+    matrixObserver.observe(matrixEl);
+  }
 </script>
 </body>
 </html>
