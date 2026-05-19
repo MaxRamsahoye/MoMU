@@ -78,8 +78,6 @@
     margin: 0;
     font-family: var(--font-serif);
     background-color: var(--bg-color); 
-    background-image: linear-gradient(to bottom, var(--top-gradient), var(--bg-color) 350px);
-    background-repeat: no-repeat;
     min-height: 100vh;
     color: var(--text-primary);
     line-height: 1.4;
@@ -91,6 +89,14 @@
     overflow: hidden;
   }
   
+  /* Added filter transition to smooth out image inverts */
+  .logo-image,
+  .footer-logo,
+  .sidebar-gif,
+  .loading-gif {
+    transition: filter 0.4s ease;
+  }
+
   /* Image invert for dark theme with screen blend mode to strip the bounding box */
   html.dark-theme .logo-image,
   html.dark-theme .footer-logo,
@@ -120,7 +126,7 @@
     pointer-events: none;
   }
   .loading-gif {
-    width: 360px; /* Increased by 3x from 120px */
+    width: 360px; 
     height: auto;
     mix-blend-mode: multiply;
   }
@@ -186,7 +192,7 @@
     clip-path: polygon(0 0, 100% 0, 0 100%, 0 100%);
     z-index: 0;
     pointer-events: none;
-    transition: all 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+    transition: background-color 0.4s ease; /* Synced up with standard transition speed */
   }
   
   .theme-toggle {
@@ -200,7 +206,7 @@
     transition: color 0.4s ease;
   }
   .theme-toggle:hover { color: var(--accent-color); }
-  .theme-toggle svg { width: 20px; height: 20px; transition: transform 0.3s ease; }
+  .theme-toggle svg { width: 20px; height: 20px; transition: transform 0.3s ease, width 0.3s ease, height 0.3s ease; }
   .moon-icon { display: none; }
   html.dark-theme .sun-icon { display: none; }
   html.dark-theme .moon-icon { display: block; }
@@ -239,6 +245,7 @@
   /*
    * ==========================================
    * LOCKED COMPONENTS: SIDEBAR & TITLE BOX
+   * (Desktop settings retained intentionally)
    * ==========================================
    */
   .locked-sidebar {
@@ -289,7 +296,7 @@
     opacity: 0;
     visibility: hidden;
     position: absolute;
-    bottom: calc(100% + 1.5rem); /* Positions absolute above the vertical dividing line */
+    bottom: calc(100% + 1.5rem); 
     left: 0;
     transition: opacity 0.4s ease, visibility 0.4s ease, color 0.4s ease;
     line-height: 1.3;
@@ -398,7 +405,6 @@
     font-weight: 600; 
   }
   
-  /* Independent GIF positioning below the sidebar flow */
   .sidebar-gif {
     display: none; 
     position: absolute;
@@ -472,6 +478,8 @@
     align-items: center;
     margin-left: 0.5rem;
     cursor: help !important;
+    /* Prevent highlight on mobile tap */
+    -webkit-tap-highlight-color: transparent;
   }
   .info-icon {
     display: inline-flex;
@@ -487,10 +495,14 @@
     color: var(--text-secondary);
     transition: color 0.4s ease, border-color 0.4s ease;
   }
-  .info-wrapper:hover .info-icon {
+  
+  /* Updated to support both hover and JS toggle (.active) for mobile */
+  .info-wrapper:hover .info-icon,
+  .info-wrapper.active .info-icon {
     color: var(--accent-color);
     border-color: var(--accent-color);
   }
+  
   .hoverbox {
     position: absolute;
     bottom: 100%;
@@ -515,7 +527,10 @@
     text-transform: none;
     letter-spacing: normal;
   }
-  .info-wrapper:hover .hoverbox {
+  
+  /* Updated to support both hover and JS toggle (.active) for mobile */
+  .info-wrapper:hover .hoverbox,
+  .info-wrapper.active .hoverbox {
     opacity: 1;
     visibility: visible;
     transform: translateY(0);
@@ -589,7 +604,7 @@
     font-weight: 600;
     color: var(--text-primary);
   }
-  #abstract h2 {
+  #abstract h2, #mobile-contents h2 {
     font-size: 1.1rem;
   }
   .content p {
@@ -620,6 +635,21 @@
     left: 0;
     top: 8px; 
   }
+
+  /* Mobile Contents specific styles */
+  .mobile-only {
+    display: none;
+  }
+  .mobile-toc-list a {
+    color: var(--text-secondary);
+    text-decoration: none;
+    transition: color 0.4s ease, font-weight 0.2s ease;
+  }
+  .mobile-toc-list a:hover, .mobile-toc-list a.active {
+    color: var(--accent-color);
+    font-weight: 600;
+  }
+
   .indented-quote {
     margin: 1.5rem 0 1.5rem 2rem;
     font-size: 1.15rem;
@@ -651,7 +681,7 @@
     z-index: 150;
     opacity: 0;
     pointer-events: none;
-    transition: color 0.4s ease, opacity 0.4s ease, transform 0.2s ease;
+    transition: color 0.4s ease, opacity 0.4s ease, transform 0.2s ease, width 0.3s ease, height 0.3s ease;
   }
   .scroll-to-top.visible {
     opacity: 1;
@@ -664,6 +694,7 @@
   .scroll-to-top svg {
     width: 24px; 
     height: 24px;
+    transition: width 0.3s ease, height 0.3s ease;
   }
   .dot-accent {
     color: var(--accent-color);
@@ -918,6 +949,78 @@
     .wf-cell p { font-size: 0.8rem; line-height: 1.3; }
     .wf-center .wf-content { padding: 1.25rem; }
   }
+
+  /* ========================================== */
+  /* RESPONSIVE DESIGN (MOBILE & TABLET)        */
+  /* ========================================== */
+  @media (max-width: 1024px) {
+    .container {
+      flex-direction: column;
+      padding: 0 5vw;
+      gap: 2rem;
+      margin: 2rem auto;
+    }
+    
+    .content {
+      margin: 0;
+      max-width: 100%;
+    }
+    
+    /* Make the mobile contents block visible */
+    .mobile-only {
+      display: block;
+    }
+    
+    /* Scale down light/dark toggle */
+    .theme-toggle svg {
+      width: 16px; 
+      height: 16px;
+    }
+
+    /* Scale down up arrow container and icon */
+    .scroll-to-top {
+      width: 36px;
+      height: 36px;
+      bottom: 1.5rem;
+      right: 1.5rem;
+    }
+    .scroll-to-top svg {
+      width: 18px; 
+      height: 18px;
+    }
+    
+    /* Scale down loading GIF */
+    .loading-gif {
+      width: 200px;
+    }
+
+    /* Hide top left grey polygon, bottom left elements, and the desktop sidebar contents */
+    header::before,
+    .corner-left,
+    .corner-bottom,
+    .locked-sidebar {
+      display: none !important;
+    }
+    
+    /* Make progress bar thinner */
+    .scroll-progress {
+      width: 6px !important;
+    }
+
+    /* Title Box Mobile Adjustments */
+    .locked-title-box {
+      margin-top: 1rem !important;
+      margin-bottom: 2rem !important;
+    }
+    .locked-title-box h1 {
+      font-size: 2.8rem;
+    }
+    
+    header {
+      padding: 1rem 5vw;
+    }
+  }
+
   @media (max-width: 768px) {
     .wireframe-wrapper { max-width: 100%; margin: 0 1rem; }
     .wireframe-container { aspect-ratio: 1.1 / 1; } 
@@ -934,6 +1037,27 @@
     .axis-label { font-size: 0.9rem; }
     .ticks { font-size: 0.8rem; }
     .wf-center .wf-content { padding: 1rem; }
+
+    /* Fine-tune typography for smallest screens */
+    .locked-title-box h1 {
+      font-size: 2.2rem;
+    }
+    .locked-title-box .subtitle {
+      font-size: 1.1rem !important;
+    }
+    .content p, .abstract-list li {
+      font-size: 1.15rem;
+    }
+    .logo-image, .footer-logo {
+      height: 60px;
+    }
+    
+    /* Safely align author hover box */
+    .hoverbox {
+      width: 280px;
+      right: -10px;
+      left: auto;
+    }
   }
 </style>
 </head>
@@ -1033,6 +1157,21 @@
         </ul>
         
         <p>Based on this typology, we propose (1) high-level principles for the (AI) governance of <em>cultural evolution</em> (2) delineate <em>civilisation design</em> criteria for a <em>viable world-system</em> and (3) endorse a candidate project for a meta-utopian political institution<span class="dot-accent">:</span> <em>The Internet Government</em>, a virtual form of <em>moral parliament</em> with AI cultural representatives.</p>
+      </section>
+
+      <section id="mobile-contents" class="mobile-only">
+        <h2>Contents</h2>
+        <ul class="mobile-toc-list abstract-list">
+          <li><a href="#intro" data-target="intro">0<span class="dot-accent">.</span> The Utopian Turn</a></li>
+          <li><a href="#mechanics" data-target="mechanics">1<span class="dot-accent">.</span> The Mechanics of Meta-Utopia</a></li>
+          <li><a href="#clash" data-target="clash">2<span class="dot-accent">.</span> The Clash of Civilisations</a></li>
+          <li><a href="#takeover" data-target="takeover">3<span class="dot-accent">.</span> Mono-Cultural Takeover</a></li>
+          <li><a href="#enclosure" data-target="enclosure">4<span class="dot-accent">.</span> Meta-Dystopian Enclosure</a></li>
+          <li><a href="#collapse" data-target="collapse">5<span class="dot-accent">.</span> Cultural Collapse</a></li>
+          <li><a href="#uplift" data-target="uplift">6<span class="dot-accent">.</span> Meta-Utopian Uplift</a></li>
+          <li><a href="#principles" data-target="principles">7<span class="dot-accent">.</span> Macrostrategic Frames</a></li>
+          <li><a href="#criteria" data-target="criteria">8<span class="dot-accent">.</span> Civilisation Design Criteria</a></li>
+        </ul>
       </section>
       
       <hr class="section-divider">
@@ -1355,12 +1494,22 @@
     document.documentElement.classList.toggle('dark-theme');
   });
 
-  // Sidebar Toggle Logic
-  const sidebar = document.getElementById('research-sidebar');
-  
-  document.getElementById('toggle-btn').addEventListener('click', function() {
-    sidebar.classList.toggle('collapsed');
-    document.body.classList.toggle('sidebar-collapsed');
+  // Make Info Icon functional on touch devices
+  const infoWrappers = document.querySelectorAll('.info-wrapper');
+  infoWrappers.forEach(wrapper => {
+    wrapper.addEventListener('click', function(e) {
+      e.stopPropagation(); // prevent document click from firing immediately
+      this.classList.toggle('active');
+    });
+  });
+
+  // Close info boxes when clicking elsewhere
+  document.addEventListener('click', function(e) {
+    infoWrappers.forEach(wrapper => {
+      if (!wrapper.contains(e.target)) {
+        wrapper.classList.remove('active');
+      }
+    });
   });
 
   window.addEventListener('scroll', function() {
@@ -1380,13 +1529,6 @@
     } else {
       scrollTopBtn.classList.remove('visible');
     }
-    
-    const sidebarMiniTitle = document.getElementById('sidebarMiniTitle');
-    if (scrollTop > titleBottom) {
-      if (sidebarMiniTitle) sidebarMiniTitle.classList.add('visible');
-    } else {
-      if (sidebarMiniTitle) sidebarMiniTitle.classList.remove('visible');
-    }
   });
 
   // Scroll to Top action
@@ -1394,14 +1536,15 @@
     window.scrollTo({ top: 0, behavior: 'smooth' });
   });
 
-  // Intersection Observer for Active Sidebar Links
+  // Intersection Observer for Active Sidebar Links & Mobile Contents Links
   const sections = document.querySelectorAll('.scroll-section');
-  const navLinks = document.querySelectorAll('#toc-list a');
+  const navLinks = document.querySelectorAll('#toc-list a, .mobile-toc-list a');
   
   // Custom JS fading transition for section jumping to prevent scroll lurching
   navLinks.forEach(link => {
     link.addEventListener('click', function(e) {
       e.preventDefault();
+      
       const targetId = this.getAttribute('data-target');
       const targetElement = document.getElementById(targetId);
       
@@ -1441,9 +1584,11 @@
       if (entry.isIntersecting) {
         navLinks.forEach(link => link.classList.remove('active'));
         const currentId = entry.target.getAttribute('id');
-        const activeLink = document.querySelector(`#toc-list a[data-target="${currentId}"]`);
-        if (activeLink) {
-          activeLink.classList.add('active');
+        
+        // Select both the desktop and mobile links
+        const activeLinks = document.querySelectorAll(`a[data-target="${currentId}"]`);
+        if (activeLinks) {
+          activeLinks.forEach(link => link.classList.add('active'));
         }
       }
     });
@@ -1452,27 +1597,6 @@
   sections.forEach(section => {
     sectionObserver.observe(section);
   });
-
-  // Intersection Observer to Auto-Close Sidebar when Matrix is in View
-  const matrixEl = document.getElementById('matrix-wrapper');
-  const matrixObserver = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        sidebar.classList.add('collapsed');
-        document.body.classList.add('sidebar-collapsed');
-      } else {
-        sidebar.classList.remove('collapsed');
-        document.body.classList.remove('sidebar-collapsed');
-      }
-    });
-  }, {
-    root: null,
-    threshold: 0.2 // Triggers when 20% of the table is visible
-  });
-
-  if (matrixEl) {
-    matrixObserver.observe(matrixEl);
-  }
 </script>
 </body>
 </html>
